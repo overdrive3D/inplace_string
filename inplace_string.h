@@ -56,4 +56,7 @@ static_assert(alignof(inplace_string<char>) == 16,
 static_assert(sizeof(inplace_string<char>) == 16,
     "invalid default size of inplace_string");
 
+template<class T, size_t N>
+bool operator<(const T *, const inplace_string<T, N>&) noexcept;
+
 #include "inplace_string.inl"

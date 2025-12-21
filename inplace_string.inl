@@ -74,3 +74,8 @@ inline inplace_string<T, N>& inplace_string<T, N>::operator=(const T *s) noexcep
     }
     return *this;
 }
+template<class T, size_t N>
+inline std::basic_ostream<T>& operator<<(std::basic_ostream<T>& os, const inplace_string<T, N>& str)
+{
+    return os << str.c_str();
+}
