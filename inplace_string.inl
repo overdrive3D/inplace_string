@@ -30,7 +30,7 @@ inline const T *inplace_string<T, N>::c_str() const noexcept
 template<class T, size_t N>
 inline size_t inplace_string<T, N>::length() const noexcept
 {
-    return inplace() ? (N - buf[N]) : len;
+    return inplace() ? (N - buf[Capacity]) : len;
 }
 
 template<class T, size_t N>
