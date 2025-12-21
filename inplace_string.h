@@ -76,9 +76,6 @@ static_assert(sizeof(inplace_string<char>) == 16,
     "invalid default size of inplace_string");
 
 template<class T, size_t N>
-bool operator<(const T* lhs, const inplace_string<T, N>& rhs) noexcept;
-
-template<class T, size_t N>
-bool operator<(const T *, const inplace_string<T, N>&) noexcept;
+bool operator<(const T*, const inplace_string<T, N>&) noexcept;
 
 #include "inplace_string.inl"
