@@ -48,13 +48,13 @@ inline bool inplace_string<T, N>::inplace() const noexcept
 template<class T, size_t N>
 inline bool inplace_string<T, N>::spilled() const noexcept
 {
-    return (Spilled == buf[N]);
+    return (Spilled == buf[Capacity]);
 }
 
 template<class T, size_t N>
 inline bool inplace_string<T, N>::literal() const noexcept
 {
-    return (Literal == buf[N]);
+    return (Literal == buf[Capacity]);
 }
 
 template<class T>
