@@ -2,8 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <assert.h>
 #include <type_traits>
 #include <iostream>
+
+#include "utils.h"
 
 template<class T, size_t N = 15>
 class alignas(16) inplace_string

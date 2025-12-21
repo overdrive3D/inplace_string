@@ -63,16 +63,6 @@ inline bool inplace_string<T, N>::literal() const noexcept
     return (Literal == buf[Capacity]);
 }
 
-template<class T>
-inline size_t string_length(const T* s) noexcept
-{
-    if constexpr (std::is_same_v<T, char>)
-        return strlen(s);
-    if constexpr (std::is_same_v<T, wchar_t>)
-        return wcslen(s);
-    return 0;
-}
-
 template<class T, size_t N>
 inline inplace_string<T, N>& inplace_string<T, N>::operator=(const T *s) noexcept
 {
