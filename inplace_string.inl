@@ -24,19 +24,19 @@ inline inplace_string<T, N>::~inplace_string()
 template<class T, size_t N>
 inline const T *inplace_string<T, N>::c_str() const noexcept
 {
-    return inplace() ? buf : lit_str;
+    return insitu() ? buf : lit_str;
 }
 
 template<class T, size_t N>
 inline size_t inplace_string<T, N>::length() const noexcept
 {
-    return inplace() ? (N - buf[Capacity]) : len;
+    return insitu() ? (N - buf[Capacity]) : len;
 }
 
 template<class T, size_t N>
 inline size_t inplace_string<T, N>::capacity() const noexcept
 {
-    return inplace() ? buf[Capacity] : cap;
+    return insitu() ? buf[Capacity] : cap;
 }
 
 template<class T, size_t N>
@@ -46,7 +46,7 @@ inline bool inplace_string<T, N>::empty() const noexcept
 }
 
 template<class T, size_t N>
-inline bool inplace_string<T, N>::inplace() const noexcept
+inline bool inplace_string<T, N>::insitu() const noexcept
 {
     return (buf[Capacity] <= N);
 }
@@ -187,7 +187,7 @@ inline void inplace_string<T, N>::append(T ch) noexcept
 template<class T, size_t N>
 inline void inplace_string<T, N>::spill(const T *src, size_t length) noexcept
 {
-    assert(inplace());
+    assert(insitu());
     assert(src);
     assert(length);
     const size_t count = length << 1;
