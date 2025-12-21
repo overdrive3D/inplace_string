@@ -18,7 +18,7 @@ template<class T, size_t N>
 inline inplace_string<T, N>::~inplace_string()
 {
     if (spilled())
-        delete[] str;
+        free(str);
 }
 
 template<class T, size_t N>
@@ -185,31 +185,17 @@ inline void inplace_string<T, N>::append(T ch) noexcept
 }
 
 template<class T, size_t N>
-inline T *inplace_string<T, N>::alloc_and_copy(const T *src, size_t count, size_t length) noexcept
+inline void inplace_string<T, N>::spill(const T *src, size_t length) noexcept
 {
-    assert(count);
-    T *dst = new(std::nothrow) T[count];
-    assert(dst);
-    if (dst)
-    {
-        assert(src);
-        assert(length);
-        memcpy(dst, src, (length + 1) * sizeof(T)); // including '\0'
-    }
-    return dst;
-}
-
-template<class T, size_t N>
-inline void inplace_string<T, N>::spill(const T *s, size_t length) noexcept
-{
-    assert(!spilled());
-    assert(s);
+    assert(inplace());
+    assert(src);
     assert(length);
     const size_t count = length << 1;
-    T *heap_str = alloc_and_copy(s, count, length);
-    if (heap_str)
+    T *dst = (T *)malloc(count * sizeof(T));
+    if (dst)
     {
-        str = heap_str;
+        memcpy(dst, src, (length + 1) * sizeof(T)); // including '\0'
+        str = dst;
         len = uint16_t(length);
         cap = uint16_t(count - length - 1);
         buf[Capacity] = Spilled;
@@ -220,12 +206,12 @@ template<class T, size_t N>
 inline void inplace_string<T, N>::grow() noexcept
 {
     assert(spilled());
+    assert(len);
     const size_t count = len << 1;
-    T *heap_str = alloc_and_copy(str, count, len);
-    if (heap_str)
+    T *grown = (T *)realloc(str, count * sizeof(T));
+    if (grown)
     {
-        delete[] str;
-        str = heap_str;
+        str = grown;
         cap = uint16_t(count - len - 1);
     }
 }

@@ -60,7 +60,6 @@ private:
     static constexpr T Literal = -2;
 
     void append(T ch) noexcept;
-    T *alloc_and_copy(const T *s, size_t count, size_t length) noexcept;
     void spill(const T *s, size_t length) noexcept;
     void grow() noexcept;
 
