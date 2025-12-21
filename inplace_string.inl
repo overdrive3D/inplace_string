@@ -285,6 +285,17 @@ inline const T *inplace_string<T, N>::element(size_t index) const noexcept
 }
 
 template<class T, size_t N>
+inline void inplace_string<T, N>::copy_inplace(const T *c_str, size_t length) noexcept
+{
+    assert(!spilled()); // Don't overwrite heap pointer
+    assert(length <= N);
+    size_t size = (length + 1) * sizeof(T); // including '\0'
+    assert(size <= sizeof(buf));
+    memcpy(buf, c_str, size);
+    buf[Capacity] = T(N - length);
+}
+
+template<class T, size_t N>
 inline void inplace_string<T, N>::append(T ch) noexcept
 {
     if (!cap) grow();
