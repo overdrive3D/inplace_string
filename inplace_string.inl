@@ -155,10 +155,7 @@ inline inplace_string<T, N>& inplace_string<T, N>::operator=(const T *s) noexcep
 {
     size_t length = string_length(s);
     if (length <= N)
-    {
-        memcpy(buf, s, (length + 1) * sizeof(T));
-        buf[Capacity] = T(N - length);
-    }
+        copy_inplace(s, length);
     else
         spill(s, length);
     return *this;
