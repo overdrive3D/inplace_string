@@ -37,6 +37,16 @@ public:
     bool insitu() const noexcept;
     bool spilled() const noexcept;
     bool literal() const noexcept;
+    T front() const noexcept;
+    T& front() noexcept;
+    T back() const noexcept;
+    T& back() noexcept;
+    T *begin() noexcept;
+    T *end() noexcept;
+    const T *begin() const noexcept;
+    const T *end() const noexcept;
+    const T *cbegin() const noexcept;
+    const T *cend() const noexcept;
 
     inplace_string& operator=(const T*) noexcept;
 

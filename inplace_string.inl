@@ -64,6 +64,86 @@ inline bool inplace_string<T, N>::literal() const noexcept
 }
 
 template<class T, size_t N>
+inline T inplace_string<T, N>::front() const noexcept
+{
+    const T *ch = element(0);
+    assert(ch);
+    return ch ? *ch : T(0);
+}
+
+template<class T, size_t N>
+inline T& inplace_string<T, N>::front() noexcept
+{
+    T *ch = element(0);
+    assert(ch);
+    return *ch;
+}
+
+template<class T, size_t N>
+inline T inplace_string<T, N>::back() const noexcept
+{
+    const T *ch = element(length() - 1);
+    assert(ch);
+    return ch ? *ch : T(0);
+}
+
+template<class T, size_t N>
+inline T& inplace_string<T, N>::back() noexcept
+{
+    T *ch = element(length() - 1);
+    assert(ch);
+    return *ch;
+}
+
+template<class T, size_t N>
+inline T *inplace_string<T, N>::begin() noexcept
+{
+    if (empty())
+        return nullptr;
+    return element(0);
+}
+
+template<class T, size_t N>
+inline T *inplace_string<T, N>::end() noexcept
+{
+    if (empty())
+        return nullptr;
+    T *it = element(length());
+    assert(it);
+    assert('\0' == *it);
+    return it;
+}
+
+template<class T, size_t N>
+inline const T *inplace_string<T, N>::begin() const noexcept
+{
+    if (empty())
+        return nullptr;
+    return element(0);
+}
+
+template<class T, size_t N>
+inline const T *inplace_string<T, N>::end() const noexcept
+{
+    const T *it = element(length());
+    assert(it);
+    assert('\0' == *it);
+    return it;
+}
+
+template<class T, size_t N>
+inline const T *inplace_string<T, N>::cbegin() const noexcept
+{
+    return begin();
+}
+
+template<class T, size_t N>
+inline const T *inplace_string<T, N>::cend() const noexcept
+{
+    return end();
+}
+
+template<class T, size_t N>
 inline inplace_string<T, N>& inplace_string<T, N>::operator=(const T *s) noexcept
 {
     size_t len = string_length(s);
