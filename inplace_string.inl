@@ -190,7 +190,7 @@ inline void inplace_string<T, N>::spill(const T *src, size_t length) noexcept
     assert(insitu());
     assert(src);
     assert(length);
-    const size_t count = length << 1;
+    const size_t count = length + (length >> 2);
     T *dst = (T *)malloc(count * sizeof(T));
     if (dst)
     {
