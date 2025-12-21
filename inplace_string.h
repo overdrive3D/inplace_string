@@ -55,8 +55,9 @@ public:
 
 private:
     static constexpr size_t Capacity = N;
-    static constexpr T Spilled = std::numeric_limits<T>::max();
-    static constexpr T Literal = std::numeric_limits<T>::max() - 1;
+    static constexpr T Spilled = -1;
+    static constexpr T Literal = -2;
+
     T *alloc_and_copy(const T *s, size_t count, size_t length) noexcept;
     void spill(const T *s, size_t length) noexcept;
     void grow() noexcept;
