@@ -57,11 +57,14 @@ private:
     static constexpr size_t Capacity = N;
     static constexpr T Spilled = std::numeric_limits<T>::max();
     static constexpr T Literal = std::numeric_limits<T>::max() - 1;
+    T *alloc_and_copy(const T *s, size_t count, size_t length) noexcept;
+    void spill(const T *s, size_t length) noexcept;
+    void grow() noexcept;
 
     union
     {
         T buf[N + 1];
-        struct { T *str; uint16_t len; };
+        struct { T *str; uint16_t len; uint16_t cap; };
         struct { const T *const lit_str; };
     };
 };
