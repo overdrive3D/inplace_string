@@ -325,6 +325,21 @@ inline void inplace_string<T, N>::grow() noexcept
     }
 }
 
+template<class T, size_t N>
+template<size_t M>
+inline void inplace_string<T, N>::move(inplace_string<T, M>& other) noexcept
+{
+    str = other.str;
+    len = other.len;
+    cap = other.cap;
+    if (other.spilled())
+        buf[Capacity] = Spilled;
+    else if (other.literal())
+        buf[Capacity] = Literal;
+    other.str = nullptr;
+    other.len = 0;
+    other.cap = 0;
+}
 
 template<class T, size_t N>
 inline void inplace_string<T, N>::reset() noexcept
