@@ -31,6 +31,9 @@ public:
     inplace_string() noexcept;
     template<size_t M>
     inplace_string(const T (&str)[M]) noexcept;
+    inplace_string(inplace_string&&) noexcept;
+    template<size_t M>
+    inplace_string(inplace_string<T, M>&&) noexcept;
     ~inplace_string();
     const T *c_str() const noexcept;
     size_t length() const noexcept;

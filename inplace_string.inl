@@ -15,6 +15,34 @@ inline inplace_string<T, N>::inplace_string(const T (&str)[M]) noexcept:
 }
 
 template<class T, size_t N>
+inline inplace_string<T, N>::inplace_string(inplace_string&& other) noexcept
+{
+    if (s.insitu())
+        memcpy(buf, other.buf, sizeof(buf));
+    else
+        move(other);
+    other.reset();
+}
+
+template<class T, size_t N>
+template<size_t M>
+inline inplace_string<T, N>::inplace_string(inplace_string<T, M>&& other) noexcept
+{
+    const size_t length = other.length();
+    if (length <= N)
+    {
+        copy_inplace(other.c_str(), length);
+        if (other.spilled())
+            free(other.str);
+    }
+    else if (other.insitu())
+        spill(other.buf, length);
+    else
+        move(other);
+    other.reset();
+}
+
+template<class T, size_t N>
 inline inplace_string<T, N>::~inplace_string()
 {
     if (spilled())
