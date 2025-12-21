@@ -59,6 +59,8 @@ private:
     static constexpr T Spilled = -1;
     static constexpr T Literal = -2;
 
+    T *element(size_t index) noexcept;
+    const T *element(size_t index) const noexcept;
     void append(T ch) noexcept;
     void spill(const T *s, size_t length) noexcept;
     void grow() noexcept;

@@ -176,6 +176,27 @@ inline bool inplace_string<T, N>::operator!=(const T *s) const noexcept
 }
 
 template<class T, size_t N>
+inline T *inplace_string<T, N>::element(size_t index) noexcept
+{
+    assert(!literal());
+    assert(index <= length());
+    if (insitu())
+        return &buf[index];
+    if (literal())
+        return nullptr; // write denied
+    return str ? str + index : nullptr;
+}
+
+template<class T, size_t N>
+inline const T *inplace_string<T, N>::element(size_t index) const noexcept
+{
+    assert(index <= length());
+    if (insitu())
+        return &buf[index];
+    return lit_str ? lit_str + index : nullptr;
+}
+
+template<class T, size_t N>
 inline void inplace_string<T, N>::append(T ch) noexcept
 {
     if (!cap) grow();
