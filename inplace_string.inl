@@ -76,6 +76,25 @@ inline inplace_string<T, N>& inplace_string<T, N>::operator=(const T *s) noexcep
 }
 
 template<class T, size_t N>
+inline inplace_string<T, N>& inplace_string<T, N>::operator+=(T ch) noexcept
+{
+    T& capacity = buf[Capacity];
+    if (capacity && (capacity <= N))
+    {
+        T len = N - capacity--;
+        buf[len] = ch;
+        buf[len + 1] = '\0';
+    }
+    else
+    {
+        if (!spilled())
+            spill(buf, N);
+        append(ch);
+    }
+    return *this;
+}
+
+template<class T, size_t N>
 inline bool inplace_string<T, N>::operator<(const inplace_string& s) const noexcept
 {
     size_t len1 = length(), len2 = s.length();
@@ -154,6 +173,15 @@ template<class T, size_t N>
 inline bool inplace_string<T, N>::operator!=(const T *s) const noexcept
 {
     return !(*this == s);
+}
+
+template<class T, size_t N>
+inline void inplace_string<T, N>::append(T ch) noexcept
+{
+    if (!cap) grow();
+    str[len++] = ch;
+    str[len] = '\0';
+    --cap;
 }
 
 template<class T, size_t N>

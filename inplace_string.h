@@ -40,6 +40,7 @@ public:
 
     inplace_string& operator=(const T*) noexcept;
 
+    inplace_string& operator+=(T) noexcept;
     bool operator<(const inplace_string&) const noexcept;
     bool operator<(const T*) const noexcept;
     bool operator<=(const inplace_string&) const noexcept;
@@ -58,6 +59,7 @@ private:
     static constexpr T Spilled = -1;
     static constexpr T Literal = -2;
 
+    void append(T ch) noexcept;
     T *alloc_and_copy(const T *s, size_t count, size_t length) noexcept;
     void spill(const T *s, size_t length) noexcept;
     void grow() noexcept;
