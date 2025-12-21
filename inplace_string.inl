@@ -152,12 +152,14 @@ inline const T *inplace_string<T, N>::cend() const noexcept
 template<class T, size_t N>
 inline inplace_string<T, N>& inplace_string<T, N>::operator=(const T *s) noexcept
 {
-    size_t len = string_length(s);
-    if (len <= N)
+    size_t length = string_length(s);
+    if (length <= N)
     {
-        memcpy(buf, s, (len + 1) * sizeof(T));
-        buf[Capacity] = T(N - len);
+        memcpy(buf, s, (length + 1) * sizeof(T));
+        buf[Capacity] = T(N - length);
     }
+    else
+        spill(s, length);
     return *this;
 }
 
