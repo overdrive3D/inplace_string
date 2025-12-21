@@ -1,7 +1,7 @@
 template<class T, size_t N>
-inplace_string<T, N>::inplace_string() noexcept
+inplace_string<T, N>::inplace_string() noexcept:
+    lit_str(nullptr)
 {
-    buf[0] = '\0';
     buf[Capacity] = N;
 }
 
