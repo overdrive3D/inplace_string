@@ -76,6 +76,87 @@ inline inplace_string<T, N>& inplace_string<T, N>::operator=(const T *s) noexcep
 }
 
 template<class T, size_t N>
+inline bool inplace_string<T, N>::operator<(const inplace_string& s) const noexcept
+{
+    size_t len1 = length(), len2 = s.length();
+    size_t len = std::min(len1, len2);
+    int cmp = string_compare(c_str(), s.c_str(), len);
+    return cmp ? cmp < 0 : len1 < len2;
+}
+
+template<class T, size_t N>
+inline bool inplace_string<T, N>::operator<(const T *s) const noexcept
+{
+    size_t len1 = length(), len2 = string_length(s);
+    size_t len = std::min(len1, len2);
+    int cmp = string_compare(c_str(), s, len);
+    return cmp ? cmp < 0 : len1 < len2;
+}
+
+template<class T, size_t N>
+inline bool inplace_string<T, N>::operator<=(const inplace_string& s) const noexcept
+{
+    return !(s < *this);
+}
+
+template<class T, size_t N>
+inline bool inplace_string<T, N>::operator<=(const T *s) const noexcept
+{
+    return !(s < *this);
+}
+
+template<class T, size_t N>
+inline bool inplace_string<T, N>::operator>(const inplace_string& s) const noexcept
+{
+    return (s < *this);
+}
+
+template<class T, size_t N>
+inline bool inplace_string<T, N>::operator>(const T *s) const noexcept
+{
+    return (s < *this);
+}
+
+template<class T, size_t N>
+inline bool inplace_string<T, N>::operator>=(const inplace_string& s) const noexcept
+{
+    return !(*this < s);
+}
+
+template<class T, size_t N>
+inline bool inplace_string<T, N>::operator>=(const T *s) const noexcept
+{
+    return !(*this < s);
+}
+
+template<class T, size_t N>
+inline bool inplace_string<T, N>::operator==(const inplace_string& s) const noexcept
+{
+    size_t len = length();
+    if (len != s.length())
+        return false;
+    return (0 == string_compare(c_str(), s.c_str(), len));
+}
+
+template<class T, size_t N>
+inline bool inplace_string<T, N>::operator==(const T *s) const noexcept
+{
+    return (0 == string_compare(c_str(), s));
+}
+
+template<class T, size_t N>
+inline bool inplace_string<T, N>::operator!=(const inplace_string& s) const noexcept
+{
+    return !(*this == s);
+}
+
+template<class T, size_t N>
+inline bool inplace_string<T, N>::operator!=(const T *s) const noexcept
+{
+    return !(*this == s);
+}
+
+template<class T, size_t N>
 inline bool operator<(const T* lhs, const inplace_string<T, N>& rhs) noexcept
 {
     size_t len1 = string_length(lhs), len2 = rhs.length();

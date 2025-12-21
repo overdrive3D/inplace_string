@@ -40,6 +40,19 @@ public:
 
     inplace_string& operator=(const T*) noexcept;
 
+    bool operator<(const inplace_string&) const noexcept;
+    bool operator<(const T*) const noexcept;
+    bool operator<=(const inplace_string&) const noexcept;
+    bool operator<=(const T*) const noexcept;
+    bool operator>(const inplace_string&) const noexcept;
+    bool operator>(const T*) const noexcept;
+    bool operator>=(const inplace_string&) const noexcept;
+    bool operator>=(const T*) const noexcept;
+    bool operator==(const inplace_string&) const noexcept;
+    bool operator==(const T*) const noexcept;
+    bool operator!=(const inplace_string&) const noexcept;
+    bool operator!=(const T*) const noexcept;
+
 private:
     static constexpr size_t Capacity = N;
     static constexpr T Spilled = std::numeric_limits<T>::max();
