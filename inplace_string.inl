@@ -64,6 +64,12 @@ inline bool inplace_string<T, N>::literal() const noexcept
 }
 
 template<class T, size_t N>
+inline size_t inplace_string<T, N>::byte_size() const noexcept
+{
+    return (length() + 1) * sizeof(T);
+}
+
+template<class T, size_t N>
 inline T inplace_string<T, N>::front() const noexcept
 {
     const T *ch = element(0);
