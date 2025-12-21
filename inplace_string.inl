@@ -2,7 +2,7 @@ template<class T, size_t N>
 inplace_string<T, N>::inplace_string() noexcept:
     lit_str(nullptr)
 {
-    buf[Capacity] = N;
+    reset();
 }
 
 template<class T, size_t N>
@@ -323,6 +323,14 @@ inline void inplace_string<T, N>::grow() noexcept
         str = grown;
         cap = uint16_t(count - len - 1);
     }
+}
+
+
+template<class T, size_t N>
+inline void inplace_string<T, N>::reset() noexcept
+{
+    buf[0] = '\0';
+    buf[Capacity] = N;
 }
 
 template<class T, size_t N>

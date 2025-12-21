@@ -75,6 +75,7 @@ private:
     void append(T ch) noexcept;
     void spill(const T *s, size_t length) noexcept;
     void grow() noexcept;
+    void reset() noexcept;
 
     union
     {
