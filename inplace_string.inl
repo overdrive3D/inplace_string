@@ -69,7 +69,7 @@ inline size_t inplace_string<T, N>::capacity() const noexcept
 }
 
 template<class T, size_t N>
-inline size_t inplace_string<T, N>::byte_size() const noexcept
+inline size_t inplace_string<T, N>::bytes_size() const noexcept
 {
     return (length() + 1) * sizeof(T);
 }
@@ -246,14 +246,14 @@ inline inplace_string<T, N>& inplace_string<T, N>::operator=(const inplace_strin
     }
     else // if (s.spilled())
     {
-        size_t byte_size = s.byte_size();
+        size_t size = s.bytes_size();
         if (!spilled())
-            copy_heap(s.str, s.len, byte_size);
+            copy_heap(s.str, s.len, size);
         else
         {
             if (len >= s.len)
             {
-                memcpy(str, s.str, byte_size);
+                memcpy(str, s.str, size);
                 cap += (len - s.len);
                 len = s.len;
             }
