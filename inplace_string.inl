@@ -149,7 +149,8 @@ inline T *inplace_string<T, N>::end() noexcept
 {
     if (empty())
         return nullptr;
-    T *it = element(length());
+    size_t index = length();
+    T *it = element(index);
     assert(it);
     assert('\0' == *it);
     return it;
@@ -164,7 +165,8 @@ inline const T *inplace_string<T, N>::begin() const noexcept
 template<class T, size_t N>
 inline const T *inplace_string<T, N>::end() const noexcept
 {
-    const T *it = element(length());
+    size_t index = length();
+    const T *it = element(index);
     assert(it);
     assert('\0' == *it);
     return it;
