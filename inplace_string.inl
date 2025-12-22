@@ -187,6 +187,41 @@ inline const T *inplace_string<T, N>::cend() const noexcept
 }
 
 template<class T, size_t N>
+inline void inplace_string<T, N>::push_back(T ch) noexcept
+{
+    T& capacity = buf[Capacity];
+    if (capacity > 0)
+    {
+        size_t len = N - capacity--;
+        buf[len] = ch;
+        buf[len + 1] = '\0';
+    }
+    else
+    {
+        if (!capacity)
+            spill(buf, N);
+        append(ch);
+    }
+}
+
+template<class T, size_t N>
+inline void inplace_string<T, N>::pop_back() noexcept
+{
+    assert(!empty());
+    T& capacity = buf[Capacity];
+    if (capacity >= 0)
+    {
+        size_t len = N - capacity++;
+        buf[len - 1] = '\0';
+    }
+    else
+    {
+        str[--len] = '\0';
+        ++cap;
+    }
+}
+
+template<class T, size_t N>
 inline inplace_string<T, N>& inplace_string<T, N>::operator=(const T *s) noexcept
 {
     size_t length = string_length(s);
@@ -200,19 +235,7 @@ inline inplace_string<T, N>& inplace_string<T, N>::operator=(const T *s) noexcep
 template<class T, size_t N>
 inline inplace_string<T, N>& inplace_string<T, N>::operator+=(T ch) noexcept
 {
-    T& capacity = buf[Capacity];
-    if (capacity && (capacity <= N))
-    {
-        T len = N - capacity--;
-        buf[len] = ch;
-        buf[len + 1] = '\0';
-    }
-    else
-    {
-        if (!spilled())
-            spill(buf, N);
-        append(ch);
-    }
+    push_back(ch);
     return *this;
 }
 

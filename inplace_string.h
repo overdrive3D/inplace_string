@@ -54,6 +54,8 @@ public:
     const T *end() const noexcept;
     const T *cbegin() const noexcept;
     const T *cend() const noexcept;
+    void push_back(T ch) noexcept;
+    void pop_back() noexcept;
 
     inplace_string& operator=(const T*) noexcept;
 
