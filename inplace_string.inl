@@ -398,7 +398,7 @@ inline void inplace_string<T, N>::copy_inplace(const T *c_str, size_t length) no
 template<class T, size_t N>
 inline void inplace_string<T, N>::copy_heap(const T *src, size_t length, size_t byte_size) noexcept
 {
-    T *dst = (T *)malloc(byte_size);
+    void *dst = malloc(byte_size);
     if (dst)
     {
         str = (T *)memcpy(dst, src, byte_size); // including '\0'
@@ -424,12 +424,11 @@ inline void inplace_string<T, N>::spill(const T *src, size_t length) noexcept
     assert(src);
     assert(length);
     const size_t count = length + (length >> 1);
-    T *dst = (T *)malloc(count * sizeof(T));
+    void *dst = malloc(count * sizeof(T));
     if (dst)
     {
-        size_t size = (length + 1) * sizeof(T); // including '\0'
-        memcpy(dst, src, size);
-        str = dst;
+        size_t byte_size = (length + 1) * sizeof(T); // including '\0'
+        str = (T *)memcpy(dst, src, byte_size);
         len = uint16_t(length);
         cap = uint16_t(count - length - 1);
         buf[Capacity] = Spilled;
