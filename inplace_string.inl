@@ -11,6 +11,7 @@ inline inplace_string<T, N>::inplace_string(const T (&str)[M]) noexcept:
     lit_str(str)
 {
     len = M - 1;
+    cap = 0;
     buf[Capacity] = Literal;
 }
 
