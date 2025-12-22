@@ -357,6 +357,19 @@ inline void inplace_string<T, N>::copy_inplace(const T *c_str, size_t length) no
 }
 
 template<class T, size_t N>
+inline void inplace_string<T, N>::copy_heap(const T *src, size_t length, size_t byte_size) noexcept
+{
+    T *dst = (T *)malloc(byte_size);
+    if (dst)
+    {
+        str = (T *)memcpy(dst, src, byte_size); // including '\0'
+        len = length;
+        cap = 0;
+        buf[Capacity] = Spilled;
+    }
+}
+
+template<class T, size_t N>
 inline void inplace_string<T, N>::append(T ch) noexcept
 {
     if (!cap) grow();
