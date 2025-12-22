@@ -17,7 +17,7 @@ inline inplace_string<T, N>::inplace_string(const T (&str)[M]) noexcept:
 template<class T, size_t N>
 inline inplace_string<T, N>::inplace_string(inplace_string&& other) noexcept
 {
-    if (s.insitu())
+    if (other.insitu())
         memcpy(buf, other.buf, sizeof(buf));
     else
         move(other);
