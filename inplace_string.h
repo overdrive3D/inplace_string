@@ -38,11 +38,11 @@ public:
     const T *c_str() const noexcept;
     size_t length() const noexcept;
     size_t capacity() const noexcept;
+    size_t byte_size() const noexcept;
     bool empty() const noexcept;
     bool insitu() const noexcept;
     bool spilled() const noexcept;
     bool literal() const noexcept;
-    size_t byte_size() const noexcept;
     T front() const noexcept;
     T& front() noexcept;
     T back() const noexcept;

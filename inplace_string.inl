@@ -69,6 +69,12 @@ inline size_t inplace_string<T, N>::capacity() const noexcept
 }
 
 template<class T, size_t N>
+inline size_t inplace_string<T, N>::byte_size() const noexcept
+{
+    return (length() + 1) * sizeof(T);
+}
+
+template<class T, size_t N>
 inline bool inplace_string<T, N>::empty() const noexcept
 {
     return insitu() ? (N == buf[Capacity]) : (0 == len);
@@ -90,12 +96,6 @@ template<class T, size_t N>
 inline bool inplace_string<T, N>::literal() const noexcept
 {
     return (Literal == buf[Capacity]);
-}
-
-template<class T, size_t N>
-inline size_t inplace_string<T, N>::byte_size() const noexcept
-{
-    return (length() + 1) * sizeof(T);
 }
 
 template<class T, size_t N>
