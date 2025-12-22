@@ -220,6 +220,48 @@ inline void inplace_string<T, N>::pop_back() noexcept
 }
 
 template<class T, size_t N>
+inline inplace_string<T, N>& inplace_string<T, N>::operator=(const inplace_string& s) noexcept
+{
+    if (s.literal())
+    {
+        if (spilled())
+            free(str);
+        lit_str = s.lit_str;
+        len = s.len;
+        cap = 0;
+        buf[Capacity] = Literal;
+    }
+    else if (s.insitu())
+    {
+        if (spilled())
+            free(str);
+        // TODO: copy only string, not entire buffer
+        memcpy(buf, s.buf, sizeof(buf));
+    }
+    else //if (s.spilled())
+    {
+        size_t byte_size = (s.len + 1) * sizeof(T);
+        if (!spilled())
+            copy_heap(s.str, s.len, byte_size);
+        else
+        {
+            if (len >= s.len)
+            {
+                memcpy(str, s.str, byte_size);
+                cap += (len - s.len);
+                len = s.len;
+            }
+            else
+            {
+                // TODO: grow and copy
+            }
+        }
+    }
+
+    return *this;
+}
+
+template<class T, size_t N>
 inline inplace_string<T, N>& inplace_string<T, N>::operator=(const T *s) noexcept
 {
     size_t length = string_length(s);

@@ -57,6 +57,7 @@ public:
     void push_back(T ch) noexcept;
     void pop_back() noexcept;
 
+    inplace_string& operator=(const inplace_string&) noexcept;
     inplace_string& operator=(const T*) noexcept;
 
     inplace_string& operator+=(T) noexcept;
