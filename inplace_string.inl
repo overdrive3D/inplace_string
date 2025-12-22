@@ -77,8 +77,7 @@ inline bool inplace_string<T, N>::empty() const noexcept
 template<class T, size_t N>
 inline bool inplace_string<T, N>::insitu() const noexcept
 {
-    T capacity = buf[Capacity];
-    return (capacity >= 0) && (capacity <= N);
+    return (buf[Capacity] >= 0);
 }
 
 template<class T, size_t N>
