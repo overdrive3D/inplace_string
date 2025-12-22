@@ -141,9 +141,7 @@ inline T& inplace_string<T, N>::at(size_t index) noexcept
 template<class T, size_t N>
 inline T *inplace_string<T, N>::begin() noexcept
 {
-    if (empty())
-        return nullptr;
-    return element(0);
+    return !empty() ? element(0) : nullptr;
 }
 
 template<class T, size_t N>
@@ -160,9 +158,7 @@ inline T *inplace_string<T, N>::end() noexcept
 template<class T, size_t N>
 inline const T *inplace_string<T, N>::begin() const noexcept
 {
-    if (empty())
-        return nullptr;
-    return element(0);
+    return !empty() ? element(0) : nullptr;
 }
 
 template<class T, size_t N>
