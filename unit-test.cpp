@@ -1,4 +1,5 @@
 #include "inplace_string.h"
+#include <initializer_list>
 
 template<class T, size_t N>
 void print(const inplace_string<T, N>& s)
@@ -45,6 +46,23 @@ void moveContructorTest()
     print(insituSpilled);
 }
 
+void pushPopTest(const std::initializer_list<char>& chars)
+{
+    string<> s;
+    for (auto ch: chars)
+    {
+        s.push_back(ch);
+        std::cout << s << std::endl;
+    }
+    while (!s.empty())
+    {
+        std::cout << s << std::endl;
+        s.pop_back();
+    }
+    assert(s.length() == 0);
+    assert(s.empty());
+}
+
 void appendCharsTest()
 {
     string<> s;
@@ -88,6 +106,10 @@ void doComparisonsWithCStr(const string<>& s1, const char *s2)
 
 int main()
 {
+    pushPopTest({'a','b','c','d','e','f','g'});
+    std::cout << std::endl;
+    pushPopTest({'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q'});
+    std::cout << std::endl;
     literalStringTest();
     std::cout << std::endl;
     moveContructorTest();
