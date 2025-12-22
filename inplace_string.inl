@@ -1,5 +1,5 @@
 template<class T, size_t N>
-inplace_string<T, N>::inplace_string() noexcept:
+inline inplace_string<T, N>::inplace_string() noexcept:
     lit_str(nullptr)
 {
     reset();
