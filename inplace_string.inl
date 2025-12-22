@@ -131,6 +131,14 @@ inline T& inplace_string<T, N>::back() noexcept
 }
 
 template<class T, size_t N>
+inline T& inplace_string<T, N>::at(size_t index) noexcept
+{
+    T *ch = element(index);
+    assert(ch);
+    return *ch;
+}
+
+template<class T, size_t N>
 inline T *inplace_string<T, N>::begin() noexcept
 {
     if (empty())

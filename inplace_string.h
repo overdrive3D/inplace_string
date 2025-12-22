@@ -47,6 +47,7 @@ public:
     T& front() noexcept;
     T back() const noexcept;
     T& back() noexcept;
+    T& at(size_t index) noexcept;
     T *begin() noexcept;
     T *end() noexcept;
     const T *begin() const noexcept;
