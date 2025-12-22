@@ -340,7 +340,8 @@ inline void inplace_string<T, N>::spill(const T *src, size_t length) noexcept
     T *dst = (T *)malloc(count * sizeof(T));
     if (dst)
     {
-        memcpy(dst, src, (length + 1) * sizeof(T)); // including '\0'
+        size_t size = (length + 1) * sizeof(T); // including '\0'
+        memcpy(dst, src, size);
         str = dst;
         len = uint16_t(length);
         cap = uint16_t(count - length - 1);
