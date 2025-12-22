@@ -224,8 +224,7 @@ inline inplace_string<T, N>& inplace_string<T, N>::operator=(const inplace_strin
 {
     if (s.literal())
     {
-        if (spilled())
-            free(str);
+        ~inplace_string();
         lit_str = s.lit_str;
         len = s.len;
         cap = 0;
@@ -233,14 +232,12 @@ inline inplace_string<T, N>& inplace_string<T, N>::operator=(const inplace_strin
     }
     else if (s.insitu())
     {
-        if (spilled())
-            free(str);
-        // TODO: copy only string, not entire buffer
-        memcpy(buf, s.buf, sizeof(buf));
+        ~inplace_string();
+        copy_inplace(s.buf, s.length());
     }
-    else //if (s.spilled())
+    else // if (s.spilled())
     {
-        size_t byte_size = (s.len + 1) * sizeof(T);
+        size_t byte_size = s.byte_size();
         if (!spilled())
             copy_heap(s.str, s.len, byte_size);
         else
