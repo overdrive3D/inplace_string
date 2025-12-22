@@ -198,7 +198,11 @@ inline void inplace_string<T, N>::push_back(T ch) noexcept
     {
         if (!capacity)
             spill(buf, N);
-        append(ch);
+        else if (!cap)
+            grow();
+        str[len++] = ch;
+        str[len] = '\0';
+        --cap;
     }
 }
 
@@ -406,15 +410,6 @@ inline void inplace_string<T, N>::copy_heap(const T *src, size_t length, size_t 
         cap = 0;
         buf[Capacity] = Spilled;
     }
-}
-
-template<class T, size_t N>
-inline void inplace_string<T, N>::append(T ch) noexcept
-{
-    if (!cap) grow();
-    str[len++] = ch;
-    str[len] = '\0';
-    --cap;
 }
 
 template<class T, size_t N>
