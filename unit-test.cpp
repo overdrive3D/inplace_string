@@ -11,6 +11,21 @@ void print(const inplace_string<T, N>& s)
         << std::endl;
 }
 
+void literalStringTest()
+{
+    const string<> str("Compile-time literal string");
+    assert(str.length() > 0);
+    assert(str.capacity() == 0);
+    assert(!str.empty());
+    assert(!str.insitu());
+    assert(!str.spilled());
+    assert(str.literal());
+    for (auto const& it: str)
+        std::cout << it << ',';
+    std::cout << std::endl;
+    print(str);
+}
+
 void moveContructorTest()
 {
     string<25> a;
@@ -73,6 +88,8 @@ void doComparisonsWithCStr(const string<>& s1, const char *s2)
 
 int main()
 {
+    literalStringTest();
+    std::cout << std::endl;
     moveContructorTest();
     std::cout << std::endl;
     appendCharsTest();
