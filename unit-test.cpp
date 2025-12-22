@@ -11,6 +11,25 @@ void print(const inplace_string<T, N>& s)
         << std::endl;
 }
 
+void moveContructorTest()
+{
+    string<25> a;
+    string<16> b;
+    string<20> c;
+    a = "This string spilled to heap";
+    b = "In-situ string";
+    c = "In-situ string too";
+    string<> triviallyMoved(std::move(a));
+    string<> copiedInsitu(std::move(b));
+    string<> insituSpilled(std::move(c));
+    assert(a.empty());
+    assert(b.empty());
+    assert(c.empty());
+    print(triviallyMoved);
+    print(copiedInsitu);
+    print(insituSpilled);
+}
+
 void appendCharsTest()
 {
     string<> s;
@@ -54,6 +73,8 @@ void doComparisonsWithCStr(const string<>& s1, const char *s2)
 
 int main()
 {
+    moveContructorTest();
+    std::cout << std::endl;
     appendCharsTest();
     std::cout << std::endl;
 
