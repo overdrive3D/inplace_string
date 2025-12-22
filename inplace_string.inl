@@ -415,19 +415,19 @@ inline void inplace_string<T, N>::copy_inplace(const T *c_str, size_t length) no
 {
     assert(!spilled()); // Don't overwrite heap pointer
     assert(length <= N);
-    size_t byte_size = (length + 1) * sizeof(T); // including '\0'
-    assert(byte_size <= sizeof(buf));
-    memcpy(buf, c_str, byte_size);
+    size_t size = (length + 1) * sizeof(T); // including '\0'
+    assert(size <= sizeof(buf));
+    memcpy(buf, c_str, size);
     buf[Capacity] = T(N - length);
 }
 
 template<class T, size_t N>
-inline void inplace_string<T, N>::copy_heap(const T *src, size_t length, size_t byte_size) noexcept
+inline void inplace_string<T, N>::copy_heap(const T *src, size_t length, size_t size) noexcept
 {
-    void *dst = malloc(byte_size);
+    void *dst = malloc(size);
     if (dst)
     {
-        str = (T *)memcpy(dst, src, byte_size); // including '\0'
+        str = (T *)memcpy(dst, src, size); // including '\0'
         len = length;
         cap = 0;
         buf[Capacity] = Spilled;
@@ -443,9 +443,9 @@ inline void inplace_string<T, N>::spill(const T *src, size_t length) noexcept
     const size_t count = length + (length >> 1);
     void *dst = malloc(count * sizeof(T));
     if (dst)
-    {
-        size_t byte_size = (length + 1) * sizeof(T); // including '\0'
-        str = (T *)memcpy(dst, src, byte_size);
+    {   // String size in memory including '\0'
+        size_t size = (length + 1) * sizeof(T);
+        str = (T *)memcpy(dst, src, size);
         len = uint16_t(length);
         cap = uint16_t(count - length - 1);
         buf[Capacity] = Spilled;

@@ -84,7 +84,7 @@ private:
     T *element(size_t index) noexcept;
     const T *element(size_t index) const noexcept;
     void copy_inplace(const T *c_str, size_t length) noexcept;
-    void copy_heap(const T *src, size_t length, size_t byte_size) noexcept;
+    void copy_heap(const T *src, size_t length, size_t size) noexcept;
     void spill(const T *s, size_t length) noexcept;
     void grow() noexcept;
     template<size_t M>
