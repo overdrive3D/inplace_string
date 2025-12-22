@@ -1,11 +1,13 @@
 #include "inplace_string.h"
 
-void print(const string<>& s)
+template<class T, size_t N>
+void print(const inplace_string<T, N>& s)
 {
     std::cout << "\"" << s
-        << "\" : length: " << s.length() <<
-        ", capacity: " << s.capacity() <<
-        ", in-situ: " << std::boolalpha << s.insitu()
+        << "\" : length: " << s.length()
+        << ", capacity: " << s.capacity()
+        << ", in-situ: " << std::boolalpha << s.insitu()
+        << ", literal: " << std::boolalpha << s.literal()
         << std::endl;
 }
 
