@@ -18,7 +18,7 @@ inline inplace_string<T, N>::inplace_string(const T (&str)[M]) noexcept:
 template<class T, size_t N>
 inline inplace_string<T, N>::inplace_string(inplace_string&& other) noexcept
 {
-    if (other.insitu())
+    if (other.insitu()) [[likely]]
         memcpy(buf, other.buf, sizeof(buf));
     else
         move(other);
@@ -30,7 +30,7 @@ template<size_t M>
 inline inplace_string<T, N>::inplace_string(inplace_string<T, M>&& other) noexcept
 {
     const size_t length = other.length();
-    if (length <= N)
+    if (length <= N) [[likely]]
     {
         copy_inplace(other.c_str(), length);
         if (other.spilled())
@@ -189,13 +189,13 @@ inline void inplace_string<T, N>::push_back(T ch) noexcept
 {
     assert(!literal());
     T& capacity = buf[Capacity];
-    if (capacity > 0)
+    if (capacity > 0) [[likely]]
     {
         size_t len = N - capacity--;
         buf[len] = ch;
         buf[len + 1] = '\0';
     }
-    else
+    else [[unlikely]]
     {
         if (!capacity)
             spill(buf, N);
@@ -213,12 +213,12 @@ inline void inplace_string<T, N>::pop_back() noexcept
     assert(!empty());
     assert(!literal());
     T& capacity = buf[Capacity];
-    if (capacity >= 0)
+    if (capacity >= 0) [[likely]]
     {
         size_t len = N - capacity++;
         buf[len - 1] = '\0';
     }
-    else
+    else [[unlikely]]
     {
         str[--len] = '\0';
         ++cap;
@@ -340,9 +340,10 @@ template<class T, size_t N>
 inline bool inplace_string<T, N>::operator==(const inplace_string& s) const noexcept
 {
     size_t len = length();
-    if (len != s.length())
+    if (len != s.length()) [[likely]]
         return false;
-    return (0 == string_compare(c_str(), s.c_str(), len));
+    else [[unlikely]]
+        return (0 == string_compare(c_str(), s.c_str(), len));
 }
 
 template<class T, size_t N>
