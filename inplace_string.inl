@@ -187,6 +187,7 @@ inline const T *inplace_string<T, N>::cend() const noexcept
 template<class T, size_t N>
 inline void inplace_string<T, N>::push_back(T ch) noexcept
 {
+    assert(!literal());
     T& capacity = buf[Capacity];
     if (capacity > 0)
     {
@@ -210,6 +211,7 @@ template<class T, size_t N>
 inline void inplace_string<T, N>::pop_back() noexcept
 {
     assert(!empty());
+    assert(!literal());
     T& capacity = buf[Capacity];
     if (capacity >= 0)
     {
