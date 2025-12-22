@@ -83,7 +83,10 @@ inline bool inplace_string<T, N>::empty() const noexcept
 template<class T, size_t N>
 inline bool inplace_string<T, N>::insitu() const noexcept
 {
-    return (buf[Capacity] >= 0);
+    if constexpr (std::is_same_v<T, char> && std::is_signed_v<char>)
+        return (buf[Capacity] >= 0);
+    else
+        return (buf[Capacity] < Literal);
 }
 
 template<class T, size_t N>
