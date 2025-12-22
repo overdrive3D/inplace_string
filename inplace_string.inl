@@ -290,6 +290,12 @@ inline bool inplace_string<T, N>::operator!=(const T *s) const noexcept
 }
 
 template<class T, size_t N>
+inline T inplace_string<T, N>::operator[](size_t index) const noexcept
+{
+    return *element(index);
+}
+
+template<class T, size_t N>
 inline T *inplace_string<T, N>::element(size_t index) noexcept
 {
     assert(!literal());

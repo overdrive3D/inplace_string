@@ -69,6 +69,7 @@ public:
     bool operator==(const T*) const noexcept;
     bool operator!=(const inplace_string&) const noexcept;
     bool operator!=(const T*) const noexcept;
+    T operator[](size_t) const noexcept;
 
 private:
     static constexpr size_t Capacity = N;
