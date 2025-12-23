@@ -314,6 +314,9 @@ inline inplace_string<T, N>& inplace_string<T, N>::operator+=(T ch) noexcept
 template<class T, size_t N>
 inline bool inplace_string<T, N>::operator<(const inplace_string& s) const noexcept
 {
+    bool eq = hashed() && s.hashed() && (uid == s.uid);
+    if (eq) [[unlikely]]
+        return false;
     size_t len1 = length(), len2 = s.length();
     size_t len = std::min(len1, len2);
     int cmp = string_compare(c_str(), s.c_str(), len);
@@ -371,8 +374,9 @@ inline bool inplace_string<T, N>::operator==(const inplace_string& s) const noex
     size_t len = length();
     if (len != s.length()) [[likely]]
         return false;
-    else [[unlikely]]
-        return (0 == string_compare(c_str(), s.c_str(), len));
+    if (hashed() && s.hashed()) [[likely]]
+        return (uid == s.uid);
+    return (0 == string_compare(c_str(), s.c_str(), len));
 }
 
 template<class T, size_t N>
