@@ -80,6 +80,25 @@ void appendCharsTest()
     print(s);
 }
 
+void substringTest()
+{
+    std::cout << "Retrievieng sub-strings from literal:" << std::endl;
+    string<> s("abcdefg");
+    std::cout << s.substr(0) << std::endl;
+    std::cout << s.substr(4) << std::endl;
+    std::cout << s.substr(10) << std::endl;
+    std::cout << "Retrievieng sub-strings from in-situ:" << std::endl;
+    s = "abcdefg";
+    std::cout << s.substr(0) << std::endl;
+    std::cout << s.substr(2, 3) << std::endl;
+    std::cout << s.substr(15) << std::endl;
+    std::cout << "Retrievieng sub-strings from spilled:" << std::endl;
+    s = "abcdefghijklmnopq";
+    std::cout << s.substr(0) << std::endl;
+    std::cout << s.substr(2, 3) << std::endl;
+    std::cout << s.substr(15) << std::endl;
+}
+
 void doComparisons(const string<>& s1, const string<>& s2)
 {
     std::cout << "Comparing two strings: \"" << s1 << "\" and \"" << s2 << "\"\n";
@@ -115,6 +134,8 @@ int main()
     moveContructorTest();
     std::cout << std::endl;
     appendCharsTest();
+    std::cout << std::endl;
+    substringTest();
     std::cout << std::endl;
 
     const string<> he("Johnny"), she("Molly");
