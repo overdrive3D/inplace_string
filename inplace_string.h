@@ -95,8 +95,15 @@ private:
     union
     {
         T buf[N + 1];
-        struct { T *str; uint16_t len; uint16_t cap; };
         struct { const T *const lit_str; };
+        struct {
+            T *str;
+            struct {
+                uint64_t len: 12;
+                uint64_t cap: 12;
+                mutable uint64_t uid: 32;
+            };
+        };
     };
 };
 

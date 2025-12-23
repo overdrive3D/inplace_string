@@ -234,14 +234,13 @@ inline uint64_t inplace_string<T, N>::hash() const noexcept
     constexpr uint64_t OffsetBasis = 14695981039346656037ull;
     constexpr uint64_t Prime = 1099511628211ull;
     const uint8_t *data = (const uint8_t *)c_str();
-    const size_t size = length() * sizeof(T);
-    uint64_t fnv = OffsetBasis;
-    for (size_t i = 0; i < size; ++i)
+    uid = OffsetBasis;
+    for (size_t i = 0, size = length() * sizeof(T); i < size; ++i)
     {
-        fnv ^= data[i];
-        fnv *= Prime;
+        uid ^= data[i];
+        uid *= Prime;
     }
-    return fnv;
+    return uid;
 }
 
 template<class T, size_t N>
