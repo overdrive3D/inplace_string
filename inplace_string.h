@@ -57,7 +57,8 @@ public:
     const T *cend() const noexcept;
     void push_back(T ch) noexcept;
     void pop_back() noexcept;
-    uint64_t hash() const noexcept;
+    uint32_t hash() const noexcept;
+    bool hashed() const noexcept;
 
     inplace_string& operator=(const inplace_string&) noexcept;
     inplace_string& operator=(const T*) noexcept;

@@ -232,18 +232,26 @@ inline void inplace_string<T, N>::pop_back() noexcept
 }
 
 template<class T, size_t N>
-inline uint64_t inplace_string<T, N>::hash() const noexcept
+inline uint32_t inplace_string<T, N>::hash() const noexcept
 {
-    constexpr uint64_t OffsetBasis = 14695981039346656037ull;
-    constexpr uint64_t Prime = 1099511628211ull;
+    constexpr uint32_t OffsetBasis = 0x811c9dc5;
+    constexpr uint32_t Prime = 0x01000193;
     const uint8_t *data = (const uint8_t *)c_str();
-    uid = OffsetBasis;
+    uint32_t hash = OffsetBasis;
     for (size_t i = 0, size = length() * sizeof(T); i < size; ++i)
     {
-        uid ^= data[i];
-        uid *= Prime;
+        hash ^= data[i];
+        hash *= Prime;
     }
-    return uid;
+    if (!insitu())
+        uid = hash;
+    return hash;
+}
+
+template<class T, size_t N>
+inline bool inplace_string<T, N>::hashed() const noexcept
+{
+    return !insitu() && (uid != Unhashed);
 }
 
 template<class T, size_t N>
