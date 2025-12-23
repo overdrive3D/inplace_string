@@ -131,11 +131,23 @@ inline T& inplace_string<T, N>::back() noexcept
 }
 
 template<class T, size_t N>
+inline T inplace_string<T, N>::at(size_t index) const noexcept
+{
+    assert(!empty());
+    assert(index < length());
+    return insitu() ? buf[index] : str[index];
+}
+
+template<class T, size_t N>
 inline T& inplace_string<T, N>::at(size_t index) noexcept
 {
-    T *ch = element(index);
-    assert(ch);
-    return *ch;
+    assert(!empty());
+    assert(!literal());
+    assert(index < length());
+    bool sso = insitu();
+    if (!sso) [[unlikely]]
+        uid = Unhashed; // invalidate hash
+    return sso ? buf[index] : str[index];
 }
 
 template<class T, size_t N>
