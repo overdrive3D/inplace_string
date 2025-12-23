@@ -58,6 +58,7 @@ public:
     const T *cend() const noexcept;
     void push_back(T ch) noexcept;
     void pop_back() noexcept;
+    inplace_string substr(size_t pos, size_t count = npos) const noexcept;
     uint32_t hash() const noexcept;
     bool hashed() const noexcept;
 
@@ -91,6 +92,7 @@ private:
     static constexpr T Literal = -2;
     static constexpr uint32_t Unhashed = std::numeric_limits<uint32_t>::max();
 
+    inplace_string(const T *lit_str, size_t offset, size_t length) noexcept;
     T *element(size_t index) noexcept;
     const T *element(size_t index) const noexcept;
     void copy_inplace(const T *c_str, size_t length) noexcept;

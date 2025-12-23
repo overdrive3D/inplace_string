@@ -232,6 +232,23 @@ inline void inplace_string<T, N>::pop_back() noexcept
 }
 
 template<class T, size_t N>
+inline inplace_string<T, N> inplace_string<T, N>::substr(size_t pos, size_t count) const noexcept
+{
+    size_t len = length();
+    if (pos >= len)
+        return inplace_string();
+    count = std::min(count, len - pos);
+    if (literal() && ('\0' == lit_str[pos + count]))
+        return inplace_string(lit_str, pos, count);
+    inplace_string<T, N> sub;
+    if (count <= N) [[likely]]
+        sub.copy_inplace(element(pos), count);
+    else [[unlikely]]
+        sub.spill(element(pos), count);
+    return sub;
+}
+
+template<class T, size_t N>
 inline uint32_t inplace_string<T, N>::hash() const noexcept
 {
     constexpr uint32_t OffsetBasis = 0x811c9dc5;
@@ -427,6 +444,16 @@ inline const T *inplace_string<T, N>::element(size_t index) const noexcept
     if (insitu())
         return &buf[index];
     return lit_str ? lit_str + index : nullptr;
+}
+
+template<class T, size_t N>
+inline inplace_string<T, N>::inplace_string(const T *str, size_t offset, size_t length) noexcept:
+    lit_str(str + offset)
+{
+    len = length;
+    cap = 0;
+    uid = Unhashed;
+    buf[Capacity] = Literal;
 }
 
 template<class T, size_t N>
