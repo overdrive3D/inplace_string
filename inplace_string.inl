@@ -520,7 +520,7 @@ inline void inplace_string<T, N>::copy_heap(const T *src, size_t length, size_t 
 template<class T, size_t N>
 inline void inplace_string<T, N>::spill(const T *src, size_t length) noexcept
 {
-    assert(insitu());
+    assert(!spilled());
     assert(src);
     assert(length);
     const size_t count = length + (length >> 1);
