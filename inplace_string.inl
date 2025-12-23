@@ -522,8 +522,8 @@ inline void inplace_string<T, N>::spill(const T *src, size_t length) noexcept
     {   // String size in memory including '\0'
         size_t size = (length + 1) * sizeof(T);
         str = (T *)memcpy(dst, src, size);
-        len = uint16_t(length);
-        cap = uint16_t(count - length - 1);
+        len = length;
+        cap = count - length - 1;
         uid = Unhashed;
         buf[Capacity] = Spilled;
     }
@@ -539,7 +539,7 @@ inline void inplace_string<T, N>::grow() noexcept
     if (grown)
     {
         str = (T *)grown;
-        cap = uint16_t(count - len - 1);
+        cap = count - len - 1;
     }
 }
 
