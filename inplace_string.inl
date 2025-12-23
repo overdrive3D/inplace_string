@@ -12,7 +12,7 @@ inline inplace_string<T, N>::inplace_string(const T (&str)[M]) noexcept:
 {
     len = M - 1;
     cap = 0;
-    uid = ~0;
+    uid = Unhashed;
     buf[Capacity] = Literal;
 }
 
@@ -208,7 +208,7 @@ inline void inplace_string<T, N>::push_back(T ch) noexcept
         str[len++] = ch;
         str[len] = '\0';
         --cap;
-        uid = ~0;
+        uid = Unhashed;
     }
 }
 
@@ -227,7 +227,7 @@ inline void inplace_string<T, N>::pop_back() noexcept
     {
         str[--len] = '\0';
         ++cap;
-        uid = ~0;
+        uid = Unhashed;
     }
 }
 
@@ -406,7 +406,7 @@ inline T *inplace_string<T, N>::element(size_t index) noexcept
     assert(index <= length());
     if (empty() || literal()) [[unlikely]]
         return nullptr; // write denied
-    uid = ~0;
+    uid = Unhashed;
     return insitu() ? &buf[index] : (str + index);
 }
 
@@ -439,7 +439,7 @@ inline void inplace_string<T, N>::copy_heap(const T *src, size_t length, size_t 
         str = (T *)memcpy(dst, src, size); // including '\0'
         len = length;
         cap = 0;
-        uid = ~0;
+        uid = Unhashed;
         buf[Capacity] = Spilled;
     }
 }
@@ -458,7 +458,7 @@ inline void inplace_string<T, N>::spill(const T *src, size_t length) noexcept
         str = (T *)memcpy(dst, src, size);
         len = uint16_t(length);
         cap = uint16_t(count - length - 1);
-        uid = ~0;
+        uid = Unhashed;
         buf[Capacity] = Spilled;
     }
 }
@@ -492,7 +492,7 @@ inline void inplace_string<T, N>::move(inplace_string<T, M>& other) noexcept
     other.str = nullptr;
     other.len = 0;
     other.cap = 0;
-    other.uid = ~0;
+    other.uid = Unhashed;
 }
 
 template<class T, size_t N>
