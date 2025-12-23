@@ -28,6 +28,7 @@ public:
     using type = T;
     using iterator = T*;
     using const_iterator = const T*;
+    static constexpr size_t npos = size_t(-1);
 
     inplace_string() noexcept;
     template<size_t M>
