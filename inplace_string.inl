@@ -427,26 +427,6 @@ inline T inplace_string<T, N>::operator[](size_t index) const noexcept
 }
 
 template<class T, size_t N>
-inline T *inplace_string<T, N>::element(size_t index) noexcept
-{
-    assert(!literal());
-    assert(index <= length());
-    if (empty() || literal()) [[unlikely]]
-        return nullptr; // write denied
-    uid = Unhashed;
-    return insitu() ? &buf[index] : (str + index);
-}
-
-template<class T, size_t N>
-inline const T *inplace_string<T, N>::element(size_t index) const noexcept
-{
-    assert(index <= length());
-    if (insitu())
-        return &buf[index];
-    return lit_str ? lit_str + index : nullptr;
-}
-
-template<class T, size_t N>
 inline inplace_string<T, N>::inplace_string(const T *str, size_t offset, size_t length) noexcept:
     lit_str(str + offset)
 {
@@ -529,6 +509,26 @@ inline void inplace_string<T, N>::move(inplace_string<T, M>& other) noexcept
     other.len = 0;
     other.cap = 0;
     other.uid = Unhashed;
+}
+
+template<class T, size_t N>
+inline T *inplace_string<T, N>::element(size_t index) noexcept
+{
+    assert(!literal());
+    assert(index <= length()); // including '\0'
+    if (empty() || literal()) [[unlikely]]
+        return nullptr; // write denied
+    uid = Unhashed; // invalidate hash
+    return insitu() ? &buf[index] : (str + index);
+}
+
+template<class T, size_t N>
+inline const T *inplace_string<T, N>::element(size_t index) const noexcept
+{
+    assert(index <= length()); // including '\0'
+    if (empty()) [[unlikely]]
+        return nullptr;
+    return insitu() ? &buf[index] : lit_str + index;
 }
 
 template<class T, size_t N>

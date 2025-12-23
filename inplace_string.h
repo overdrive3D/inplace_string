@@ -93,14 +93,14 @@ private:
     static constexpr uint32_t Unhashed = std::numeric_limits<uint32_t>::max();
 
     inplace_string(const T *lit_str, size_t offset, size_t length) noexcept;
-    T *element(size_t index) noexcept;
-    const T *element(size_t index) const noexcept;
     void copy_inplace(const T *c_str, size_t length) noexcept;
     void copy_heap(const T *src, size_t length, size_t size) noexcept;
     void spill(const T *s, size_t length) noexcept;
     void grow() noexcept;
     template<size_t M>
     void move(inplace_string<T, M>&) noexcept;
+    T *element(size_t index) noexcept;
+    const T *element(size_t index) const noexcept;
     void reset() noexcept;
 
     union
