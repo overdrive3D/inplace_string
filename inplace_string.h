@@ -64,17 +64,23 @@ public:
     inplace_string& operator=(const T*) noexcept;
 
     inplace_string& operator+=(T) noexcept;
-    bool operator<(const inplace_string&) const noexcept;
+    template<size_t M>
+    bool operator<(const inplace_string<T, M>&) const noexcept;
     bool operator<(const T*) const noexcept;
-    bool operator<=(const inplace_string&) const noexcept;
+    template<size_t M>
+    bool operator<=(const inplace_string<T, M>&) const noexcept;
     bool operator<=(const T*) const noexcept;
-    bool operator>(const inplace_string&) const noexcept;
+    template<size_t M>
+    bool operator>(const inplace_string<T, M>&) const noexcept;
     bool operator>(const T*) const noexcept;
-    bool operator>=(const inplace_string&) const noexcept;
+    template<size_t M>
+    bool operator>=(const inplace_string<T, M>&) const noexcept;
     bool operator>=(const T*) const noexcept;
-    bool operator==(const inplace_string&) const noexcept;
+    template<size_t M>
+    bool operator==(const inplace_string<T, M>&) const noexcept;
     bool operator==(const T*) const noexcept;
-    bool operator!=(const inplace_string&) const noexcept;
+    template<size_t M>
+    bool operator!=(const inplace_string<T, M>&) const noexcept;
     bool operator!=(const T*) const noexcept;
     T operator[](size_t) const noexcept;
 
