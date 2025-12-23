@@ -258,11 +258,12 @@ inline inplace_string<T, N> inplace_string<T, N>::substr(size_t pos, size_t coun
     count = std::min(count, len - pos);
     if (literal() && ('\0' == lit_str[pos + count]))
         return inplace_string(lit_str, pos, count);
-    inplace_string<T, N> sub;
+    inplace_string sub;
+    const T *first = insitu() ? (buf + pos) : (str + pos);
     if (count <= N) [[likely]]
-        sub.copy_inplace(element(pos), count);
+        sub.copy_inplace(first, count);
     else [[unlikely]]
-        sub.spill(element(pos), count);
+        sub.spill(first, count);
     return sub;
 }
 
@@ -528,26 +529,6 @@ inline void inplace_string<T, N>::move(inplace_string<T, M>& other) noexcept
     other.len = 0;
     other.cap = 0;
     other.uid = Unhashed;
-}
-
-template<class T, size_t N>
-inline T *inplace_string<T, N>::element(size_t index) noexcept
-{
-    assert(!literal());
-    assert(index <= length()); // including '\0'
-    if (empty() || literal()) [[unlikely]]
-        return nullptr; // write denied
-    uid = Unhashed; // invalidate hash
-    return insitu() ? &buf[index] : (str + index);
-}
-
-template<class T, size_t N>
-inline const T *inplace_string<T, N>::element(size_t index) const noexcept
-{
-    assert(index <= length()); // including '\0'
-    if (empty()) [[unlikely]]
-        return nullptr;
-    return insitu() ? &buf[index] : lit_str + index;
 }
 
 template<class T, size_t N>

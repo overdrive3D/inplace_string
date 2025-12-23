@@ -100,8 +100,6 @@ private:
     void grow() noexcept;
     template<size_t M>
     void move(inplace_string<T, M>&) noexcept;
-    T *element(size_t index) noexcept;
-    const T *element(size_t index) const noexcept;
     void reset() noexcept;
 
     union
