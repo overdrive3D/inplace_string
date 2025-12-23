@@ -101,6 +101,7 @@ private:
     void copy_heap(const T *src, size_t length, size_t size) noexcept;
     void spill(const T *s, size_t length) noexcept;
     void grow() noexcept;
+    T *buy_space(size_t length) noexcept;
     template<size_t M>
     void move(inplace_string<T, M>&) noexcept;
     void reset() noexcept;

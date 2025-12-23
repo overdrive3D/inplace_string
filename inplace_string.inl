@@ -275,15 +275,11 @@ inline inplace_string<T, N>& inplace_string<T, N>::replace(size_t pos, size_t co
     if (pos >= length())
         return *this;
     assert(count <= other.length());
-    bool doalloc = literal() || (pos + count > length());
-    if (doalloc)
+    bool buy = literal() || (pos + count > length());
+    if (buy)
     {
         size_t length = pos + count;
-        size_t size = (length + 1) * sizeof(T);
-        T *dst = (insitu() || literal())
-            ? (T *)malloc(size)
-            : (T *)realloc(str, size);
-        if (dst)
+        if (auto dst = buy_space(length))
         {
             memcpy(dst, this->c_str(), pos * sizeof(T));
             memcpy(dst + pos, other.c_str(), count * sizeof(T));
@@ -291,9 +287,6 @@ inline inplace_string<T, N>& inplace_string<T, N>::replace(size_t pos, size_t co
             if (spilled())
                 free(str);
             str = dst;
-            len = length;
-            cap = 0;
-            uid = Unhashed;
             buf[Capacity] = Spilled;
         }
     }
@@ -548,6 +541,22 @@ inline void inplace_string<T, N>::grow() noexcept
         str = (T *)grown;
         cap = uint16_t(count - len - 1);
     }
+}
+
+template<class T, size_t N>
+inline T *inplace_string<T, N>::buy_space(size_t length) noexcept
+{
+    const size_t count = length + (length >> 1);
+    size_t size = (count + 1) * sizeof(T);
+    void *dst;
+    if (insitu() || literal())
+        dst = malloc(size);
+    else // if (spilled())
+        dst = realloc(str, size);
+    len = length;
+    cap = count - length - 1;
+    uid = Unhashed;
+    return (T *)dst;
 }
 
 template<class T, size_t N>
