@@ -105,33 +105,29 @@ inline bool inplace_string<T, N>::literal() const noexcept
 template<class T, size_t N>
 inline T inplace_string<T, N>::front() const noexcept
 {
-    const T *ch = element(0);
-    assert(ch);
-    return ch ? *ch : T(0);
+    assert(!empty());
+    return *begin();
 }
 
 template<class T, size_t N>
 inline T& inplace_string<T, N>::front() noexcept
 {
-    T *ch = element(0);
-    assert(ch);
-    return *ch;
+    assert(!empty());
+    return *begin();
 }
 
 template<class T, size_t N>
 inline T inplace_string<T, N>::back() const noexcept
 {
-    const T *ch = element(length() - 1);
-    assert(ch);
-    return ch ? *ch : T(0);
+    assert(!empty());
+    return *(end() - 1);
 }
 
 template<class T, size_t N>
 inline T& inplace_string<T, N>::back() noexcept
 {
-    T *ch = element(length() - 1);
-    assert(ch);
-    return *ch;
+    assert(!empty());
+    return *(end() - 1);
 }
 
 template<class T, size_t N>
