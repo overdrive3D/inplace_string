@@ -146,7 +146,12 @@ template<class T, size_t N>
 inline T *inplace_string<T, N>::begin() noexcept
 {
     assert(!literal());
-    return literal() ? nullptr : (insitu() ? buf : str);
+    if (literal())
+        return nullptr; // can't write
+    bool sso = insitu();
+    if (!sso) [[unlikely]]
+        uid = Unhashed; // invalidate hash
+    return sso ? buf : str;
 }
 
 template<class T, size_t N>
@@ -154,8 +159,11 @@ inline T *inplace_string<T, N>::end() noexcept
 {
     assert(!literal());
     if (literal())
-        return nullptr;
-    T *end = insitu()
+        return nullptr; // can't write
+    bool sso = insitu();
+    if (!sso) [[unlikely]]
+        uid = Unhashed; // invalidate hash
+    T *end = sso
         ? buf + (N - buf[Capacity])
         : str + len;
     assert('\0' == *end);
