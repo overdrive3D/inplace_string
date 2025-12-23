@@ -268,6 +268,43 @@ inline inplace_string<T, N> inplace_string<T, N>::substr(size_t pos, size_t coun
 }
 
 template<class T, size_t N>
+template<size_t M>
+inline inplace_string<T, N>& inplace_string<T, N>::replace(size_t pos, size_t count, const inplace_string<T, M>& other) noexcept
+{
+    assert(pos < length());
+    if (pos >= length())
+        return *this;
+    assert(count <= other.length());
+    bool doalloc = literal() || (pos + count > length());
+    if (doalloc)
+    {
+        size_t length = pos + count;
+        size_t size = (length + 1) * sizeof(T);
+        T *dst = (insitu() || literal())
+            ? (T *)malloc(size)
+            : (T *)realloc(str, size);
+        if (dst)
+        {
+            memcpy(dst, this->c_str(), pos * sizeof(T));
+            memcpy(dst + pos, other.c_str(), count * sizeof(T));
+            dst[length] = '\0';
+            if (spilled())
+                free(str);
+            str = dst;
+            len = length;
+            cap = 0;
+            uid = Unhashed;
+            buf[Capacity] = Spilled;
+        }
+    }
+    else
+    {
+        // TODO
+    }
+    return *this;
+}
+
+template<class T, size_t N>
 inline uint32_t inplace_string<T, N>::hash() const noexcept
 {
     constexpr uint32_t OffsetBasis = 0x811c9dc5;

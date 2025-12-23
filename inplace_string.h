@@ -60,6 +60,9 @@ public:
     void push_back(T ch) noexcept;
     void pop_back() noexcept;
     inplace_string substr(size_t pos, size_t count = npos) const noexcept;
+    template<size_t M>
+    inplace_string& replace(size_t pos, size_t count,
+        const inplace_string<T, M>& other) noexcept;
     uint32_t hash() const noexcept;
     bool hashed() const noexcept;
 
