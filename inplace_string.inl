@@ -457,10 +457,10 @@ inline void inplace_string<T, N>::grow() noexcept
     assert(spilled());
     assert(len);
     const size_t count = len << 1;
-    T *grown = (T *)realloc(str, count * sizeof(T));
+    void *grown = realloc(str, count * sizeof(T));
     if (grown)
     {
-        str = grown;
+        str = (T *)grown;
         cap = uint16_t(count - len - 1);
     }
 }
