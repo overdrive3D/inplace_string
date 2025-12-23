@@ -434,9 +434,8 @@ inline void inplace_string<T, N>::copy_inplace(const T *c_str, size_t length) no
 {
     assert(!spilled()); // Don't overwrite heap pointer
     assert(length <= N);
-    size_t size = (length + 1) * sizeof(T); // including '\0'
-    assert(size <= sizeof(buf));
-    memcpy(buf, c_str, size);
+    memcpy(buf, c_str, length * sizeof(T));
+    buf[length] = '\0';
     buf[Capacity] = T(N - length);
 }
 
