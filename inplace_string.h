@@ -81,6 +81,7 @@ private:
     static constexpr size_t Capacity = N;
     static constexpr T Spilled = -1;
     static constexpr T Literal = -2;
+    static constexpr uint32_t Unhashed = std::numeric_limits<uint32_t>::max();
 
     T *element(size_t index) noexcept;
     const T *element(size_t index) const noexcept;
