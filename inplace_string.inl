@@ -145,35 +145,37 @@ inline T& inplace_string<T, N>::at(size_t index) noexcept
 template<class T, size_t N>
 inline T *inplace_string<T, N>::begin() noexcept
 {
-    return !empty() ? element(0) : nullptr;
+    assert(!literal());
+    return literal() ? nullptr : (insitu() ? buf : str);
 }
 
 template<class T, size_t N>
 inline T *inplace_string<T, N>::end() noexcept
 {
-    if (empty())
+    assert(!literal());
+    if (literal())
         return nullptr;
-    size_t index = length();
-    T *it = element(index);
-    assert(it);
-    assert('\0' == *it);
-    return it;
+    T *end = insitu()
+        ? buf + (N - buf[Capacity])
+        : str + len;
+    assert('\0' == *end);
+    return end;
 }
 
 template<class T, size_t N>
 inline const T *inplace_string<T, N>::begin() const noexcept
 {
-    return !empty() ? element(0) : nullptr;
+    return insitu() ? buf : str;
 }
 
 template<class T, size_t N>
 inline const T *inplace_string<T, N>::end() const noexcept
 {
-    size_t index = length();
-    const T *it = element(index);
-    assert(it);
-    assert('\0' == *it);
-    return it;
+    const T *end = insitu()
+        ? buf + (N - buf[Capacity])
+        : str + len;
+    assert('\0' == *end);
+    return end;
 }
 
 template<class T, size_t N>
