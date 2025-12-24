@@ -313,7 +313,7 @@ inline uint32_t inplace_string<T, N>::hash() const noexcept
     constexpr uint32_t Prime = 0x01000193;
     const uint8_t *data = (const uint8_t *)c_str();
     uint32_t hash = OffsetBasis;
-    for (size_t i = 0, size = length() * sizeof(T); i < size; ++i)
+    for (size_t i = length() * sizeof(T); i-- > 0; )
     {
         hash ^= data[i];
         hash *= Prime;
