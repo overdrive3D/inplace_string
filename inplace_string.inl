@@ -376,9 +376,6 @@ template<class T, size_t N>
 template<size_t M>
 inline bool inplace_string<T, N>::operator<(const inplace_string<T, M>& s) const noexcept
 {
-    bool eq = hashed() && s.hashed() && (uid == s.uid);
-    if (eq) [[unlikely]]
-        return false;
     size_t len1 = length(), len2 = s.length();
     size_t len = std::min(len1, len2);
     int cmp = string_compare(c_str(), s.c_str(), len);
@@ -440,7 +437,7 @@ inline bool inplace_string<T, N>::operator==(const inplace_string<T, M>& s) cons
     size_t len = length();
     if (len != s.length()) [[likely]]
         return false;
-    if (hashed() && s.hashed()) [[likely]]
+    if (lazy_hash() && s.lazy_hash())
         return (uid == s.uid);
     return (0 == string_compare(c_str(), s.c_str(), len));
 }
@@ -566,6 +563,16 @@ inline void inplace_string<T, N>::reset() noexcept
 {
     buf[0] = '\0';
     buf[Capacity] = N;
+}
+
+template<class T, size_t N>
+inline bool inplace_string<T, N>::lazy_hash() const noexcept
+{
+    if (insitu()) [[likely]]
+        return false; // no storage
+    if (Unhashed == uid)
+        hash();
+    return true;
 }
 
 template<class T, size_t N>

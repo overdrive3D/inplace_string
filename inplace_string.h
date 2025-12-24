@@ -106,6 +106,7 @@ private:
     void move(inplace_string<T, M>&) noexcept;
     void init(size_t length, size_t capacity, T flag, uint32_t hash = Unhashed) noexcept;
     void reset() noexcept;
+    bool lazy_hash() const noexcept;
 
     union
     {
