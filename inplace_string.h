@@ -104,6 +104,7 @@ private:
     T *buy_space(size_t much, size_t& space) noexcept;
     template<size_t M>
     void move(inplace_string<T, M>&) noexcept;
+    void init(size_t length, size_t capacity, T flag, uint32_t hash = Unhashed) noexcept;
     void reset() noexcept;
 
     union
