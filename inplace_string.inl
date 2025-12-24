@@ -580,11 +580,7 @@ inline void inplace_string<T, N>::reset() noexcept
 template<class T, size_t N>
 inline bool inplace_string<T, N>::lazy_hash() const noexcept
 {
-    if (insitu()) [[likely]]
-        return false; // no storage
-    if (Unhashed == uid)
-        hash();
-    return true;
+    return (!insitu()) && ((uid != Unhashed) || (hash(), true));
 }
 
 template<class T, size_t N>
