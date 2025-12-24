@@ -59,6 +59,7 @@ public:
     const T *cend() const noexcept;
     void push_back(T ch) noexcept;
     void pop_back() noexcept;
+    size_t copy(T *dst, size_t count, size_t pos = 0) const noexcept;
     inplace_string substr(size_t pos, size_t count = npos) const noexcept;
     template<size_t M>
     inplace_string& replace(size_t pos, size_t count,

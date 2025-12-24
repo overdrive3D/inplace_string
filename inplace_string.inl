@@ -247,6 +247,18 @@ inline void inplace_string<T, N>::pop_back() noexcept
 }
 
 template<class T, size_t N>
+inline size_t inplace_string<T, N>::copy(T *dst, size_t count, size_t pos) const noexcept
+{
+    size_t len = length();
+    assert(pos <= len);
+    const T *src = c_str() + pos;
+    count = std::min(count, len - pos);
+    for (size_t i = 0; i < count; ++i)
+        dst[i] = src[i];
+    return count;
+}
+
+template<class T, size_t N>
 inline inplace_string<T, N> inplace_string<T, N>::substr(size_t pos, size_t count) const noexcept
 {
     size_t len = length();
