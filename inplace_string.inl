@@ -278,8 +278,8 @@ inline inplace_string<T, N>& inplace_string<T, N>::replace(size_t pos, size_t co
     bool buy = literal() || (pos + count > length());
     if (buy)
     {
-        size_t length = pos + count;
-        if (auto dst = buy_space(length))
+        size_t length = pos + count, space;
+        if (auto dst = buy_space(length, space))
         {
             memcpy(dst, this->c_str(), pos * sizeof(T));
             memcpy(dst + pos, other.c_str(), count * sizeof(T));
@@ -287,6 +287,9 @@ inline inplace_string<T, N>& inplace_string<T, N>::replace(size_t pos, size_t co
             if (spilled())
                 free(str);
             str = dst;
+            len = length;
+            cap = space - length - 1;
+            uid = Unhashed;
             buf[Capacity] = Spilled;
         }
     }
@@ -516,14 +519,13 @@ inline void inplace_string<T, N>::spill(const T *src, size_t length) noexcept
     assert(!spilled());
     assert(src);
     assert(length);
-    const size_t count = length + (length >> 1);
-    void *dst = malloc(count * sizeof(T));
-    if (dst)
-    {   // String size in memory including '\0'
-        size_t size = (length + 1) * sizeof(T);
-        str = (T *)memcpy(dst, src, size);
+    size_t space;
+    if (auto dst = buy_space(length, space))
+    {   // Copy string including '\0'
+        memcpy(dst, src, (length + 1) * sizeof(T));
+        str = dst;
         len = length;
-        cap = count - length - 1;
+        cap = space - length - 1;
         uid = Unhashed;
         buf[Capacity] = Spilled;
     }
@@ -544,19 +546,14 @@ inline void inplace_string<T, N>::grow() noexcept
 }
 
 template<class T, size_t N>
-inline T *inplace_string<T, N>::buy_space(size_t length) noexcept
+inline T *inplace_string<T, N>::buy_space(size_t much, size_t& space) noexcept
 {
-    const size_t count = length + (length >> 1);
-    size_t size = (count + 1) * sizeof(T);
-    void *dst;
+    space = much + (much >> 1);
+    const size_t size = space * sizeof(T);
     if (insitu() || literal())
-        dst = malloc(size);
-    else // if (spilled())
-        dst = realloc(str, size);
-    len = length;
-    cap = count - length - 1;
-    uid = Unhashed;
-    return (T *)dst;
+        return (T *)malloc(size);
+    else
+        return (T *)realloc(str, size);
 }
 
 template<class T, size_t N>
