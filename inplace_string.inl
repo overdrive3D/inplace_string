@@ -450,7 +450,10 @@ inline bool inplace_string<T, N>::operator==(const inplace_string<T, M>& s) cons
     if (len != s.length()) [[likely]]
         return false;
     if (lazy_hash() && s.lazy_hash())
-        return (uid == s.uid);
+    {
+        if (uid != s.uid) [[likely]]
+            return false;
+    }
     return (0 == string_compare(c_str(), s.c_str(), len));
 }
 
