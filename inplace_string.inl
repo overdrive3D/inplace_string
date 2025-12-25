@@ -569,6 +569,16 @@ inline void inplace_string<T, N>::spill(const T *src, size_t length) noexcept
 }
 
 template<class T, size_t N>
+inline void inplace_string<T, N>::copy_on_write() noexcept
+{
+    assert(literal());
+    if (len <= N) [[likely]]
+        copy_inplace(lit_str, len);
+    else
+        spill(lit_str, len);
+}
+
+template<class T, size_t N>
 inline void inplace_string<T, N>::grow() noexcept
 {
     assert(spilled());

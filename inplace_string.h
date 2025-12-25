@@ -106,6 +106,7 @@ private:
     void copy_inplace(const T *c_str, size_t length) noexcept;
     void copy_heap(const T *src, size_t length, size_t size) noexcept;
     void spill(const T *s, size_t length) noexcept;
+    void copy_on_write() noexcept;
     void grow() noexcept;
     T *buy_space(size_t much, size_t& space) noexcept;
     template<size_t M>
