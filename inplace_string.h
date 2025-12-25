@@ -9,6 +9,7 @@
 #include <iostream>
 
 #include "fnv_hash.h"
+#include "literal_string.h"
 #include "utils.h"
 
 template<class T, size_t N = 15>
@@ -34,6 +35,7 @@ public:
     inplace_string() noexcept;
     template<size_t M>
     inplace_string(const T (&str)[M]) noexcept;
+    inplace_string(const literal_string<T>& lit) noexcept;
     inplace_string(inplace_string&&) noexcept;
     template<size_t M>
     inplace_string(inplace_string<T, M>&&) noexcept;

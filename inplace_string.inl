@@ -14,6 +14,13 @@ inline inplace_string<T, N>::inplace_string(const T (&str)[M]) noexcept:
 }
 
 template<class T, size_t N>
+inline inplace_string<T, N>::inplace_string(const literal_string<T>& lit) noexcept:
+    lit_str(lit.c_str())
+{
+    init(lit.length(), 0, Literal, lit.hash());
+}
+
+template<class T, size_t N>
 inline inplace_string<T, N>::inplace_string(inplace_string&& other) noexcept
 {
     if (other.insitu()) [[likely]]
