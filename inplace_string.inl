@@ -309,17 +309,14 @@ inline inplace_string<T, N>& inplace_string<T, N>::replace(size_t pos, size_t co
 template<class T, size_t N>
 inline uint32_t inplace_string<T, N>::hash() const noexcept
 {
-    constexpr uint32_t OffsetBasis = 0x811c9dc5;
-    constexpr uint32_t Prime = 0x01000193;
-    const uint8_t *data = (const uint8_t *)c_str();
-    uint32_t hash = OffsetBasis;
-    for (size_t i = length() * sizeof(T); i-- > 0; )
+    uint32_t hash;
+    if (insitu()) [[likely]]
+        hash = fnv1(buf, N - buf[Capacity]);
+    else [[unlikely]]
     {
-        hash ^= data[i];
-        hash *= Prime;
-    }
-    if (!insitu())
+        hash = fnv1(lit_str, len);
         uid = hash;
+    }
     return hash;
 }
 

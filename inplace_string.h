@@ -8,6 +8,7 @@
 #include <type_traits>
 #include <iostream>
 
+#include "fnv_hash.h"
 #include "utils.h"
 
 template<class T, size_t N = 15>
