@@ -291,7 +291,14 @@ inline size_t inplace_string<T, N>::find(const T *substr, size_t pos /* 0 */) co
 }
 
 template<class T, size_t N>
-inline size_t inplace_string<T, N>::copy(T *dst, size_t count, size_t pos) const noexcept
+template<size_t M>
+inline size_t inplace_string<T, N>::find(const inplace_string<T, M>& substr, size_t pos /* 0 */) const noexcept
+{
+    return find(substr.c_str(), pos);
+}
+
+template<class T, size_t N>
+inline size_t inplace_string<T, N>::copy(T *dst, size_t count, size_t pos /* 0 */) const noexcept
 {
     size_t len = length();
     assert(pos <= len);
