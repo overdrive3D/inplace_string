@@ -66,6 +66,7 @@ public:
     size_t find(const T *substr, size_t pos = 0) const noexcept;
     size_t copy(T *dst, size_t count, size_t pos = 0) const noexcept;
     inplace_string substr(size_t pos, size_t count = npos) const noexcept;
+    inplace_string& replace(T old, T new_) noexcept;
     template<size_t M>
     inplace_string& replace(size_t pos, size_t count,
         const inplace_string<T, M>& other) noexcept;

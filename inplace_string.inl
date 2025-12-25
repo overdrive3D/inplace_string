@@ -321,6 +321,26 @@ inline inplace_string<T, N> inplace_string<T, N>::substr(size_t pos, size_t coun
 }
 
 template<class T, size_t N>
+inline inplace_string<T, N>& inplace_string<T, N>::replace(T old, T new_) noexcept
+{
+    assert(old != new_);
+    size_t pos = find(old);
+    if (npos == pos)
+        return *this;
+    if (literal())
+        copy_on_write();
+    T *ch = insitu() ? &buf[pos] : str + pos;
+    *ch++ = new_;
+    while (*ch)
+    {
+        if (*ch == old)
+            *ch = new_;
+        ++ch;
+    }
+    return *this;
+}
+
+template<class T, size_t N>
 template<size_t M>
 inline inplace_string<T, N>& inplace_string<T, N>::replace(size_t pos, size_t count, const inplace_string<T, M>& other) noexcept
 {
