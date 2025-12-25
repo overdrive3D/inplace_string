@@ -254,6 +254,24 @@ inline void inplace_string<T, N>::pop_back() noexcept
 }
 
 template<class T, size_t N>
+inline size_t inplace_string<T, N>::find(T ch, size_t pos /* 0 */) const noexcept
+{
+    size_t len = length();
+    assert(pos < len);
+    if (pos >= len)
+        return npos;
+    const T *begin = c_str() + pos;
+    const void *found;
+    if constexpr (std::is_same_v<T, char>)
+        found = memchr(begin, ch, len - pos);
+    else
+        found = wmemchr(begin, ch, len - pos);
+    if (!found)
+        return npos;
+    return (const T*)found - begin + pos;
+}
+
+template<class T, size_t N>
 inline size_t inplace_string<T, N>::copy(T *dst, size_t count, size_t pos) const noexcept
 {
     size_t len = length();
