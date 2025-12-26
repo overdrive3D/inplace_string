@@ -378,6 +378,28 @@ inline inplace_string<T, N>& inplace_string<T, N>::replace(size_t pos, size_t co
 }
 
 template<class T, size_t N>
+inline inplace_string<char, N> inplace_string<T, N>::ansi() const noexcept
+{
+    if constexpr (std::is_same_v<T, wchar_t>)
+    {
+        inplace_string<char, N> dst;
+        const wchar_t *src = c_str();
+        size_t len = wcstombs(nullptr, src, 0);
+        if (size_t(-1) == len) // conversion error
+            return dst;
+        if (len <= N)
+            dst.buf[Capacity] = char(N - wcstombs(dst.buf, src, N + 1));
+        else if (dst.str = (char *)malloc(len + 1))
+        {
+            len = wcstombs(dst.str, src, len + 1);
+            dst.init(len, 0, dst.Spilled);
+        }
+        return dst;
+    }
+    else return *this;
+}
+
+template<class T, size_t N>
 inline uint32_t inplace_string<T, N>::hash() const noexcept
 {
     uint32_t hash;

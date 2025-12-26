@@ -72,6 +72,7 @@ public:
     template<size_t M>
     inplace_string& replace(size_t pos, size_t count,
         const inplace_string<T, M>& other) noexcept;
+    inplace_string<char, N> ansi() const noexcept;
     uint32_t hash() const noexcept;
     bool hashed() const noexcept;
 
