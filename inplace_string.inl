@@ -400,6 +400,32 @@ inline inplace_string<char, N> inplace_string<T, N>::ansi() const noexcept
 }
 
 template<class T, size_t N>
+inline inplace_string<wchar_t, N> inplace_string<T, N>::wide() const noexcept
+{
+    if constexpr (std::is_same_v<T, char>)
+    {
+        inplace_string<wchar_t, N> dst;
+        const char *src = c_str();
+        size_t len = mbstowcs(nullptr, src, 0);
+        if (size_t(-1) == len) // conversion error
+            return dst;
+        if (len <= N)
+            dst.buf[Capacity] = wchar_t(N - mbstowcs(dst.buf, src, N + 1));
+        else
+        {
+            size_t size = (len + 1) * sizeof(wchar_t);
+            if (dst.str = (wchar_t *)malloc(size))
+            {
+                len = mbstowcs(dst.str, src, len + 1);
+                dst.init(len, 0, dst.Spilled);
+            }
+        }
+        return dst;
+    }
+    else return *this;
+}
+
+template<class T, size_t N>
 inline uint32_t inplace_string<T, N>::hash() const noexcept
 {
     uint32_t hash;
