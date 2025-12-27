@@ -21,7 +21,7 @@ inline inplace_string<T, N>::inplace_string(const literal_string<T>& lit) noexce
 }
 
 template<class T, size_t N>
-inline inplace_string<T, N>::inplace_string(const inplace_string<T, N>& str) noexcept:
+inline inplace_string<T, N>::inplace_string(const inplace_string& str) noexcept:
     lit_str(str.lit_str)
 {
     if (str.literal())
