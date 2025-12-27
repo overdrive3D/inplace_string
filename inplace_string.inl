@@ -42,6 +42,17 @@ inline inplace_string<T, N>::inplace_string(const inplace_string<T, M>& str) noe
 }
 
 template<class T, size_t N>
+inline inplace_string<T, N>::inplace_string(inplace_string&& str) noexcept:
+    lit_str(str.lit_str)
+{
+    if (str.insitu()) [[likely]]
+        copy_ctor(str);
+    else [[unlikely]]
+        init(str.len, str.cap, /* flag */ str.buf[N], str.uid);
+    str.reset();
+}
+
+template<class T, size_t N>
 template<size_t M>
 inline inplace_string<T, N>::inplace_string(inplace_string<T, M>&& str) noexcept:
     lit_str(str.lit_str)

@@ -39,6 +39,7 @@ public:
     inplace_string(const inplace_string<T, N>&) noexcept;
     template<size_t M>
     inplace_string(const inplace_string<T, M>&) noexcept;
+    inplace_string(inplace_string&&) noexcept;
     template<size_t M>
     inplace_string(inplace_string<T, M>&&) noexcept;
     ~inplace_string();
