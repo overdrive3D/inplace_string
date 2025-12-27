@@ -665,7 +665,8 @@ inline void inplace_string<T, N>::spill(const T *src, size_t length) noexcept
     {   // Copy string including '\0'
         memcpy(dst, src, (length + 1) * sizeof(T));
         str = dst;
-        init(length, space - length - 1, Spilled);
+        uint32_t hash = hashed() ? (uint32_t)uid : Unhashed;
+        init(length, space - length - 1, Spilled, hash);
     }
 }
 
