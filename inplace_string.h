@@ -36,7 +36,7 @@ public:
     template<size_t M>
     inplace_string(const T (&str)[M]) noexcept;
     inplace_string(const literal_string<T>& lit) noexcept;
-    inplace_string(inplace_string&&) noexcept;
+    inplace_string(const inplace_string&) noexcept;
     template<size_t M>
     inplace_string(inplace_string<T, M>&&) noexcept;
     ~inplace_string();
