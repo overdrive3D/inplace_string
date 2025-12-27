@@ -222,7 +222,7 @@ inline void inplace_string<T, N>::push_back(T ch) noexcept
     {
         size_t len = N - capacity--;
         buf[len] = ch;
-        buf[len + 1] = '\0';
+        buf[len + 1] = T('\0');
     }
     else [[unlikely]]
     {
@@ -231,7 +231,7 @@ inline void inplace_string<T, N>::push_back(T ch) noexcept
         else if (!cap)
             grow();
         str[len++] = ch;
-        str[len] = '\0';
+        str[len] = T('\0');
         --cap;
         uid = Unhashed;
     }
@@ -246,11 +246,11 @@ inline void inplace_string<T, N>::pop_back() noexcept
     if (capacity >= 0) [[likely]]
     {
         size_t len = N - capacity++;
-        buf[len - 1] = '\0';
+        buf[len - 1] = T('\0');
     }
     else [[unlikely]]
     {
-        str[--len] = '\0';
+        str[--len] = T('\0');
         ++cap;
         uid = Unhashed;
     }
@@ -319,7 +319,7 @@ inline inplace_string<T, N> inplace_string<T, N>::substr(size_t pos, size_t coun
     if (pos >= len)
         return inplace_string();
     count = std::min(count, len - pos);
-    if (literal() && ('\0' == lit_str[pos + count]))
+    if (literal() && (T('\0') == lit_str[pos + count]))
         return inplace_string(lit_str, pos, count);
     inplace_string sub;
     const T *first = insitu() ? (buf + pos) : (str + pos);
@@ -366,7 +366,7 @@ inline inplace_string<T, N>& inplace_string<T, N>::replace(size_t pos, size_t co
         {
             memcpy(dst, this->c_str(), pos * sizeof(T));
             memcpy(dst + pos, other.c_str(), count * sizeof(T));
-            dst[length] = '\0';
+            dst[length] = T('\0');
             if (spilled())
                 free(str);
             str = dst;
@@ -636,7 +636,7 @@ inline void inplace_string<T, N>::copy_inplace(const T *c_str, size_t length) no
     assert(!spilled()); // Don't overwrite heap pointer
     assert(length <= N);
     memcpy(buf, c_str, length * sizeof(T));
-    buf[length] = '\0';
+    buf[length] = T('\0');
     buf[Capacity] = T(N - length);
 }
 
@@ -725,7 +725,7 @@ inline void inplace_string<T, N>::init(size_t length, size_t capacity, T flag, u
 template<class T, size_t N>
 inline void inplace_string<T, N>::reset() noexcept
 {
-    buf[0] = '\0';
+    buf[0] = T('\0');
     buf[Capacity] = N;
 }
 
