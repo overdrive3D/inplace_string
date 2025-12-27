@@ -628,8 +628,6 @@ inline void inplace_string<T, N>::copy_ctor(const inplace_string<T, M>& s) noexc
     }
 }
 
-}
-
 template<class T, size_t N>
 inline void inplace_string<T, N>::copy_inplace(const T *c_str, size_t length) noexcept
 {
@@ -707,10 +705,7 @@ inline void inplace_string<T, N>::move(inplace_string<T, M>& other) noexcept
 {
     str = other.str;
     init(other.len, other.cap, other.spilled() ? Spilled : Literal, other.uid);
-    other.str = nullptr;
-    other.len = 0;
-    other.cap = 0;
-    other.uid = Unhashed;
+    other.reset();
 }
 
 template<class T, size_t N>
