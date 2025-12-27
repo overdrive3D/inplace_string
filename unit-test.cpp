@@ -4,12 +4,17 @@
 template<class T, size_t N>
 void print(const inplace_string<T, N>& s)
 {
-    std::cout << "\"" << s
-        << "\" : length: " << s.length()
-        << ", capacity: " << s.capacity()
+    if constexpr (std::is_same_v<T, char>)
+        std::cout << "\"" << s;
+    else
+        std::wcout << L"\"" << s;
+    std::cout << "\" : len=" << s.length()
+        << ", cap=" << s.capacity()
         << ", in-situ: " << std::boolalpha << s.insitu()
-        << ", literal: " << std::boolalpha << s.literal()
-        << std::endl;
+        << ", literal: " << std::boolalpha << s.literal();
+    if (s.hashed())
+        std::cout << ", hash=" << s.hash();
+    std::cout << std::endl;
 }
 
 void literalStringTest()
