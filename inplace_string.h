@@ -127,7 +127,7 @@ private:
     union
     {
         T buf[N + 1];
-        struct { const T *lit_str; };
+        struct { const T *const lit_str; };
         struct {
             T *str;
             struct {

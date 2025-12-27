@@ -21,16 +21,24 @@ inline inplace_string<T, N>::inplace_string(const literal_string<T>& lit) noexce
 }
 
 template<class T, size_t N>
-inline inplace_string<T, N>::inplace_string(const inplace_string<T, N>& str) noexcept
+inline inplace_string<T, N>::inplace_string(const inplace_string<T, N>& str) noexcept:
+    lit_str(str.lit_str)
 {
-    copy_ctor(str);
+    if (str.literal())
+        init(str.len, str.cap, Literal, str.uid);
+    else
+        copy_ctor(str);
 }
 
 template<class T, size_t N>
 template<size_t M>
-inline inplace_string<T, N>::inplace_string(const inplace_string<T, M>& str) noexcept
+inline inplace_string<T, N>::inplace_string(const inplace_string<T, M>& str) noexcept:
+    lit_str(str.lit_str)
 {
-    copy_ctor(str);
+    if (str.literal())
+        init(str.len, str.cap, Literal, str.uid);
+    else
+        copy_ctor(str);
 }
 
 template<class T, size_t N>
@@ -613,19 +621,11 @@ template<class T, size_t N>
 template<size_t M>
 inline void inplace_string<T, N>::copy_ctor(const inplace_string<T, M>& s) noexcept
 {
-    if (s.literal())
-    {
-        lit_str = s.lit_str;
-        init(s.len, s.cap, Literal, s.uid);
-    }
-    else
-    {
-        size_t len = s.length();
-        if (len <= N) [[likely]]
-            copy_inplace(s.c_str(), len);
-        else [[unlikely]]
-            copy_heap(s.c_str(), len, s.bytes_size());
-    }
+    size_t len = s.length();
+    if (len <= N) [[likely]]
+        copy_inplace(s.c_str(), len);
+    else [[unlikely]]
+        copy_heap(s.c_str(), len, s.bytes_size());
 }
 
 template<class T, size_t N>
