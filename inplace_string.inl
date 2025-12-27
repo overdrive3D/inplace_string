@@ -352,7 +352,7 @@ inline inplace_string<T, N>& inplace_string<T, N>::replace(T old, T new_) noexce
         return *this;
     if (literal())
         copy_on_write();
-    T *ch = insitu() ? &buf[pos] : str + pos;
+    T *ch = begin() + pos;
     *ch++ = new_;
     while (*ch)
     {
