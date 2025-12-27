@@ -52,11 +52,8 @@ inline inplace_string<T, N>::inplace_string(inplace_string<T, M>&& other) noexce
         copy_heap(other.buf, len, other.bytes_size());
     else // literal or spilled
         move(other);
-    if (other.spilled())
-    {
-        free(other.str);
-        other.reset();
-    }
+    other.~inplace_string();
+    other.reset();
 }
 
 template<class T, size_t N>
