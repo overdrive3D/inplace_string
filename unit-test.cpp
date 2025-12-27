@@ -32,6 +32,22 @@ void literalStringTest()
     print(str);
 }
 
+void copyConstructorTest()
+{
+    const string<> readOnly(Literal("Read-only string"));
+    string<> small, lengthy;
+    small = "Small string";
+    lengthy = "A bit lengthy string";
+    string<> copiedReadOnly(readOnly);
+    string<> copiedInsitu(small);
+    string<> copiedSpilled(lengthy);
+    string<20> copiedAsInsitu(lengthy);
+    print(copiedReadOnly);
+    print(copiedInsitu);
+    print(copiedSpilled);
+    print(copiedAsInsitu);
+}
+
 void moveContructorTest()
 {
     string<25> a;
@@ -135,6 +151,8 @@ int main()
     pushPopTest({'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q'});
     std::cout << std::endl;
     literalStringTest();
+    std::cout << std::endl;
+    copyConstructorTest();
     std::cout << std::endl;
     moveContructorTest();
     std::cout << std::endl;
