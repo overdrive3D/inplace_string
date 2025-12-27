@@ -36,7 +36,9 @@ public:
     template<size_t M>
     inplace_string(const T (&str)[M]) noexcept;
     inplace_string(const literal_string<T>& lit) noexcept;
-    inplace_string(const inplace_string&) noexcept;
+    inplace_string(const inplace_string<T, N>&) noexcept;
+    template<size_t M>
+    inplace_string(const inplace_string<T, M>&) noexcept;
     template<size_t M>
     inplace_string(inplace_string<T, M>&&) noexcept;
     ~inplace_string();
@@ -108,6 +110,8 @@ private:
     static constexpr uint32_t Unhashed = std::numeric_limits<uint32_t>::max();
 
     inplace_string(const T *lit_str, size_t offset, size_t length) noexcept;
+    template<size_t M>
+    void copy_ctor(const inplace_string<T, M>& str) noexcept;
     void copy_inplace(const T *c_str, size_t length) noexcept;
     void copy_heap(const T *src, size_t length, size_t size) noexcept;
     void spill(const T *s, size_t length) noexcept;
@@ -123,7 +127,7 @@ private:
     union
     {
         T buf[N + 1];
-        struct { const T *const lit_str; };
+        struct { const T *lit_str; };
         struct {
             T *str;
             struct {
