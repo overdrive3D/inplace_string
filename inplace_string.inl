@@ -21,13 +21,14 @@ inline inplace_string<T, N>::inplace_string(const literal_string<T>& lit) noexce
 }
 
 template<class T, size_t N>
-inline inplace_string<T, N>::inplace_string(inplace_string&& other) noexcept
+inline inplace_string<T, N>::inplace_string(inplace_string&& str) noexcept
 {
-    if (other.insitu()) [[likely]]
-        memcpy(buf, other.buf, sizeof(buf));
+    size_t len = str.length();
+    if (len <= N) [[likely]]
+        copy_inplace(str.c_str(), len);
     else
-        move(other);
-    other.reset();
+        move(str);
+    str.reset();
 }
 
 template<class T, size_t N>
