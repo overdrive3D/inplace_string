@@ -43,17 +43,14 @@ inline inplace_string<T, N>::inplace_string(const inplace_string<T, M>& str) noe
 
 template<class T, size_t N>
 template<size_t M>
-inline inplace_string<T, N>::inplace_string(inplace_string<T, M>&& other) noexcept
+inline inplace_string<T, N>::inplace_string(inplace_string<T, M>&& str) noexcept:
+    lit_str(str.lit_str)
 {
-    const size_t len = other.length();
-    if (len <= N) [[likely]]
-        copy_inplace(other.c_str(), len);
-    else if (other.insitu())
-        copy_heap(other.buf, len, other.bytes_size());
-    else // literal or spilled
-        move(other);
-    other.~inplace_string();
-    other.reset();
+    if (str.insitu()) [[likely]]
+        copy_ctor(str);
+    else [[unlikely]]
+        init(str.len, str.cap, /* flag */ str.buf[M], str.uid);
+    str.reset();
 }
 
 template<class T, size_t N>
