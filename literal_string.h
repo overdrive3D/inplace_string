@@ -8,7 +8,7 @@ class literal_string
 public:
     template<size_t N>
     constexpr literal_string(const T (&str)[N]):
-        str(str), len(N), uid(fnv1(str)) {}
+        str(str), len(N - 1), uid(fnv1(str)) {}
     constexpr const T* c_str() const { return str; }
     constexpr size_t length() const { return len; }
     constexpr uint32_t hash() const { return uid; }
