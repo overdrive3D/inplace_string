@@ -379,26 +379,28 @@ inline inplace_string<T, N>& inplace_string<T, N>::replace(size_t pos, size_t co
         buf[new_len] = T('\0');
         buf[Capacity] = T(N - new_len);
     }
-    else if (spilled() && (pos + count <= len + cap))
-    {   // we have enough heap capacity for replace
-        memcpy(str + pos, string.c_str(), copy_size);
-        str[new_len] = T('\0');
-        size_t shrink = new_len - length();
-        init(len, cap - shrink, Spilled);
-    }
-    else
-    {   // (re)alloc with enough space
-        size_t size = (pos + count + 1) * sizeof(T);
-        if (spilled())
-            str = (T *)realloc(str, size);
-        else
-        {
-            T *dst = (T *)malloc(size);
-            str = (T *)memcpy(dst, c_str(), pos * sizeof(T));
+    else [[unlikely]]
+    {
+        if (spilled() && (pos + count <= len + cap))
+        {   // we have enough heap capacity for replace
+            memcpy(str + pos, string.c_str(), copy_size);
+            cap -= (new_len - length());
         }
-        memcpy(str + pos, string.c_str(), copy_size);
+        else
+        {   // (re)alloc with enough space
+            size_t size = (pos + count + 1) * sizeof(T);
+            if (spilled())
+                str = (T *)realloc(str, size);
+            else
+            {
+                T *dst = (T *)malloc(size);
+                str = (T *)memcpy(dst, c_str(), pos * sizeof(T));
+            }
+            memcpy(str + pos, string.c_str(), copy_size);
+            cap = 0;
+        }
         str[new_len] = T('\0');
-        init(new_len, 0, Spilled);
+        init(new_len, cap, Spilled);
     }
     return *this;
 }
