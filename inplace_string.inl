@@ -442,26 +442,6 @@ inline inplace_string<wchar_t, N> inplace_string<T, N>::wide() const noexcept
 }
 
 template<class T, size_t N>
-inline uint32_t inplace_string<T, N>::hash() const noexcept
-{
-    uint32_t hash;
-    if (insitu()) [[likely]]
-        hash = fnv1(buf, N - buf[Capacity]);
-    else [[unlikely]]
-    {
-        hash = fnv1(lit_str, len);
-        uid = hash;
-    }
-    return hash;
-}
-
-template<class T, size_t N>
-inline bool inplace_string<T, N>::hashed() const noexcept
-{
-    return !insitu() && (uid != Unhashed);
-}
-
-template<class T, size_t N>
 template<class U>
 inline U inplace_string<T, N>::to() const noexcept
 {
@@ -505,6 +485,26 @@ inline U inplace_string<T, N>::to() const noexcept
     }
     assert(T('\0') == *end);
     return number;
+}
+
+template<class T, size_t N>
+inline uint32_t inplace_string<T, N>::hash() const noexcept
+{
+    uint32_t hash;
+    if (insitu()) [[likely]]
+        hash = fnv1(buf, N - buf[Capacity]);
+    else [[unlikely]]
+    {
+        hash = fnv1(lit_str, len);
+        uid = hash;
+    }
+    return hash;
+}
+
+template<class T, size_t N>
+inline bool inplace_string<T, N>::hashed() const noexcept
+{
+    return !insitu() && (uid != Unhashed);
 }
 
 template<class T, size_t N>

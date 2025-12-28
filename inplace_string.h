@@ -79,10 +79,10 @@ public:
         const inplace_string<T, M>& other) noexcept;
     inplace_string<char, N> ansi() const noexcept;
     inplace_string<wchar_t, N> wide() const noexcept;
-    uint32_t hash() const noexcept;
-    bool hashed() const noexcept;
     template<class U>
     U to() const noexcept;
+    uint32_t hash() const noexcept;
+    bool hashed() const noexcept;
 
     inplace_string& operator=(const inplace_string&) noexcept;
     inplace_string& operator=(const T*) noexcept;
