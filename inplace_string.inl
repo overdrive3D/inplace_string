@@ -467,38 +467,44 @@ inline U inplace_string<T, N>::to() const noexcept
 {
     static_assert(std::is_integral_v<U> || std::is_floating_point_v<U>,
         "inplace_string::to(): only intergral and floating point types are supported");
-    char *end = nullptr;
-    if constexpr (std::is_integral_v<U>)
+    U number(0);
+    T *end = nullptr;
+    if constexpr (std::is_same_v<T, char>)
     {
-        if (std::is_signed_v<U>)
+        if constexpr (std::is_integral_v<U>)
         {
-            long long ll = strtoll(c_str(), &end, 10);
-            assert('\0' == *end);
-            return (U)ll;
+            if (std::is_signed_v<U>)
+                number = (U)strtoll(c_str(), &end, 10);
+            else if (std::is_unsigned_v<U>)
+                number = (U)strtoull(c_str(), &end, 10);
         }
-        else if (std::is_unsigned_v<U>)
+        else if constexpr (std::is_floating_point_v<U>)
         {
-            unsigned long long ull = strtoull(c_str(), &end, 10);
-            assert('\0' == *end);
-            return (U)ull;
+            if constexpr (std::is_same_v<U, float>)
+                number = (U)strtof(c_str(), &end);
+            else
+                number = (U)strtod(c_str(), &end);
         }
     }
-    else if constexpr (std::is_floating_point_v<U>)
+    else if constexpr(std::is_same_v<T, wchar_t>)
     {
-        if constexpr (std::is_same_v<U, float>)
+        if constexpr (std::is_integral_v<U>)
         {
-            float f = strtof(c_str(), &end);
-            assert('\0' == *end);
-            return f;
+            if (std::is_signed_v<U>)
+                number = (U)wcstoll(c_str(), &end, 10);
+            else if (std::is_unsigned_v<U>)
+                number = (U)wcstoull(c_str(), &end, 10);
         }
-        else
+        else if constexpr (std::is_floating_point_v<U>)
         {
-            double d = strtod(c_str(), &end);
-            assert('\0' == *end);
-            return d;
+            if constexpr (std::is_same_v<U, float>)
+                number = (U)wcstof(c_str(), &end);
+            else
+                number = (U)wcstod(c_str(), &end);
         }
     }
-    else return U{};
+    assert(T('\0') == *end);
+    return number;
 }
 
 template<class T, size_t N>
