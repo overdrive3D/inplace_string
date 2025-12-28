@@ -21,7 +21,7 @@ class alignas(16) inplace_string
     static_assert(N >= 15, "inplace string too short");
     static_assert(N < std::numeric_limits<T>::max() - 1, "inplace string too long");
     static constexpr size_t BufSize = sizeof(T[N + 1]);
-    static_assert(BufSize > sizeof(T*) + sizeof(uint32_t),
+    static_assert(BufSize >= sizeof(T*) + sizeof(uint64_t),
         "sso buffer too small for aliasing");
     template<class, size_t>
     friend class inplace_string;
