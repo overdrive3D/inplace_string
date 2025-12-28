@@ -462,6 +462,46 @@ inline bool inplace_string<T, N>::hashed() const noexcept
 }
 
 template<class T, size_t N>
+template<class U>
+inline U inplace_string<T, N>::to() const noexcept
+{
+    static_assert(std::is_integral_v<U> || std::is_floating_point_v<U>,
+        "inplace_string::to(): only intergral and floating point types are supported");
+    char *end = nullptr;
+    if constexpr (std::is_integral_v<U>)
+    {
+        if (std::is_signed_v<U>)
+        {
+            long long ll = strtoll(c_str(), &end, 10);
+            assert('\0' == *end);
+            return (U)ll;
+        }
+        else if (std::is_unsigned_v<U>)
+        {
+            unsigned long long ull = strtoull(c_str(), &end, 10);
+            assert('\0' == *end);
+            return (U)ull;
+        }
+    }
+    else if constexpr (std::is_floating_point_v<U>)
+    {
+        if constexpr (std::is_same_v<U, float>)
+        {
+            float f = strtof(c_str(), &end);
+            assert('\0' == *end);
+            return f;
+        }
+        else
+        {
+            double d = strtod(c_str(), &end);
+            assert('\0' == *end);
+            return d;
+        }
+    }
+    else return U{};
+}
+
+template<class T, size_t N>
 inline inplace_string<T, N>& inplace_string<T, N>::operator=(const inplace_string& s) noexcept
 {
     if (s.literal())

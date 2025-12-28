@@ -79,6 +79,8 @@ public:
     inplace_string<wchar_t, N> wide() const noexcept;
     uint32_t hash() const noexcept;
     bool hashed() const noexcept;
+    template<class U>
+    U to() const noexcept;
 
     inplace_string& operator=(const inplace_string&) noexcept;
     inplace_string& operator=(const T*) noexcept;
