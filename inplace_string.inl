@@ -365,30 +365,39 @@ inline inplace_string<T, N>& inplace_string<T, N>::replace(T old, T new_) noexce
 
 template<class T, size_t N>
 template<size_t M>
-inline inplace_string<T, N>& inplace_string<T, N>::replace(size_t pos, size_t count, const inplace_string<T, M>& other) noexcept
+inline inplace_string<T, N>& inplace_string<T, N>::replace(size_t pos, size_t count, const inplace_string<T, M>& string) noexcept
 {
     assert(pos < length());
     if (pos >= length())
         return *this;
-    assert(count <= other.length());
-    bool buy = literal() || (pos + count > length());
-    if (buy)
-    {
-        size_t length = pos + count, space;
-        if (auto dst = buy_space(length, space))
-        {
-            memcpy(dst, this->c_str(), pos * sizeof(T));
-            memcpy(dst + pos, other.c_str(), count * sizeof(T));
-            dst[length] = T('\0');
-            if (spilled())
-                free(str);
-            str = dst;
-            init(length, space - length - 1, Spilled);
-        }
+    assert(count <= string.length());
+    size_t new_len = std::max(pos + count, length());
+    if (insitu() && (pos + count <= N)) [[likely]]
+    {   // replace in-situ
+        memcpy(&buf[pos], string.c_str(), count * sizeof(T));
+        buf[new_len] = T('\0');
+        buf[Capacity] = T(N - new_len);
+    }
+    else if (spilled() && (pos + count <= len + cap))
+    {   // we have enough heap capacity for replace
+        memcpy(str + pos, string.c_str(), count * sizeof(T));
+        str[new_len] = T('\0');
+        size_t shrink = new_len - length();
+        init(len, cap - shrink, Spilled);
     }
     else
-    {
-        // TODO
+    {   // (re)alloc with enough space
+        size_t size = (pos + count + 1) * sizeof(T);
+        if (spilled())
+            str = (T *)realloc(str, size);
+        else
+        {
+            T *dst = (T *)malloc(size);
+            str = (T *)memcpy(dst, c_str(), pos * sizeof(T));
+        }
+        memcpy(str + pos, string.c_str(), count * sizeof(T));
+        str[new_len] = T('\0');
+        init(new_len, 0, Spilled);
     }
     return *this;
 }
