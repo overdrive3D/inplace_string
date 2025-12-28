@@ -372,15 +372,16 @@ inline inplace_string<T, N>& inplace_string<T, N>::replace(size_t pos, size_t co
         return *this;
     assert(count <= string.length());
     size_t new_len = std::max(pos + count, length());
+    size_t copy_size = count * sizeof(T);
     if (insitu() && (pos + count <= N)) [[likely]]
     {   // replace in-situ
-        memcpy(&buf[pos], string.c_str(), count * sizeof(T));
+        memcpy(&buf[pos], string.c_str(), copy_size);
         buf[new_len] = T('\0');
         buf[Capacity] = T(N - new_len);
     }
     else if (spilled() && (pos + count <= len + cap))
     {   // we have enough heap capacity for replace
-        memcpy(str + pos, string.c_str(), count * sizeof(T));
+        memcpy(str + pos, string.c_str(), copy_size);
         str[new_len] = T('\0');
         size_t shrink = new_len - length();
         init(len, cap - shrink, Spilled);
@@ -395,7 +396,7 @@ inline inplace_string<T, N>& inplace_string<T, N>::replace(size_t pos, size_t co
             T *dst = (T *)malloc(size);
             str = (T *)memcpy(dst, c_str(), pos * sizeof(T));
         }
-        memcpy(str + pos, string.c_str(), count * sizeof(T));
+        memcpy(str + pos, string.c_str(), copy_size);
         str[new_len] = T('\0');
         init(new_len, 0, Spilled);
     }
