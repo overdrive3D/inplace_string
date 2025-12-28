@@ -334,8 +334,8 @@ inline inplace_string<T, N> inplace_string<T, N>::substr(size_t pos, size_t coun
     count = std::min(count, len - pos);
     if (literal() && (T('\0') == lit_str[pos + count]))
         return inplace_string(lit_str, pos, count);
+    const T *first = begin() + pos;
     inplace_string sub;
-    const T *first = insitu() ? (buf + pos) : (str + pos);
     if (count <= N) [[likely]]
         sub.copy_inplace(first, count);
     else [[unlikely]]
