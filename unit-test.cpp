@@ -156,6 +156,45 @@ void substringReplaceTest()
     std::cout << str << std::endl;
 }
 
+template<class String>
+void toNumberConversionTest()
+{
+    std::cout << "Convert string to number:" << std::endl;
+    const String noString;
+    int zero = noString.to<int>();
+    assert(0 == zero);
+    if constexpr (std::is_same_v<typename String::type, wchar_t>)
+    {
+        const String empty(L"");
+        double zero = empty.to<double>();
+        assert(0 == zero);
+    }
+    else
+    {
+        const String empty("");
+        double zero = empty.to<double>();
+        assert(0 == zero);
+    }
+    String integral;
+    String floatingPoint;
+    if constexpr (std::is_same_v<typename String::type, wchar_t>)
+    {
+        integral = L"904259";
+        floatingPoint = L"-12.956";
+    }
+    else
+    {
+        integral = "904259";
+        floatingPoint = "-12.956";
+    }
+    int i = integral.to<int>();
+    double d = floatingPoint.to<double>();
+    std::cout << i << std::endl;
+    std::cout << d << std::endl;
+    // these should fail
+    //string<>("4-23a45").to<int>();
+    //string<>("[34.*743").to<float>();
+}
 void doComparisons(const string<>& s1, const string<>& s2)
 {
     std::cout << "Comparing two strings: \"" << s1 << "\" and \"" << s2 << "\"\n";
@@ -199,6 +238,9 @@ int main()
     characterReplaceTest();
     std::cout << std::endl;
     substringReplaceTest();
+    std::cout << std::endl;
+    toNumberConversionTest<string<>>();
+    toNumberConversionTest<wstring<>>();
 
     const string<> he("Johnny"), she("Molly");
     doComparisons(he, she);
