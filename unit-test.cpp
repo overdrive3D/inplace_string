@@ -135,7 +135,7 @@ void substringReplaceTest()
     std::cout << "Replacing sub-string:" << std::endl;
     // literal -> in-situ -> replace
     const string<> ket("ket");
-    string<> basket("basic");
+    string<> basket("basics");
     std::cout << basket << " -> ";
     basket.replace(3, ket.length(), ket);
     std::cout << basket << std::endl;

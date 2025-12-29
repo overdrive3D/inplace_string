@@ -371,44 +371,22 @@ inline inplace_string<T, N>& inplace_string<T, N>::replace(size_t pos, size_t co
     assert(pos <= len);
     if (pos > len)
         return *this;
-    assert(count <= string.length());
-    bool sso = (pos + count <= N);
-    if (sso && literal() && (len <= N))
+    count = std::min(count, string.length());
+    assert(pos + count <= len);
+    if (pos + count > len)
+        return *this;
+    if (literal() && len <= N)
     {   // can fit in-situ
-        size_t num = (pos + count) >= len ? pos : len;
-        copy_inplace(lit_str, num);
+        copy_inplace(lit_str, len);
         return replace(pos, count, string);
     }
-    else
+    else if (insitu()) [[likely]]
+        memcpy(&buf[pos], string.c_str(), count * sizeof(T));
+    else [[unlikely]]
     {
-        size_t new_len = std::max(pos + count, len);
-        size_t copy_size = count * sizeof(T);
-        if (sso && insitu()) [[likely]]
-        {   // replace in-situ
-            memcpy(&buf[pos], string.c_str(), copy_size);
-            buf[new_len] = T('\0');
-            buf[Capacity] = T(N - new_len);
-        }
-        else [[unlikely]]
-        {
-            if (spilled() && (pos + count <= len + cap))
-            {   // we have enough heap capacity for replace
-                memcpy(str + pos, string.c_str(), copy_size);
-                cap -= (new_len - length());
-            }
-            else
-            {   // (re)alloc with enough space
-                size_t size = (new_len + 1) * sizeof(T);
-                if (spilled())
-                    str = (T *)realloc(str, size);
-                else
-                    copy_heap(c_str(), len, size);
-                memcpy(str + pos, string.c_str(), copy_size);
-                cap = 0;
-            }
-            str[new_len] = T('\0');
-            init(new_len, cap, Spilled);
-        }
+        if (!spilled())
+            spill(c_str(), len);
+        memcpy(str + pos, string.c_str(), count * sizeof(T));
     }
     return *this;
 }
