@@ -714,11 +714,13 @@ inline void inplace_string<T, N>::copy_inplace(const T *c_str, size_t length) no
 template<class T, size_t N>
 inline void inplace_string<T, N>::copy_heap(const T *src, size_t length, size_t size) noexcept
 {
+    size_t count = (length + 1) * sizeof(T);
+    assert(count <= size);
     void *dst = malloc(size);
     if (dst)
     {
-        str = (T *)memcpy(dst, src, size); // including '\0'
-        init(length, 0, Spilled);
+        str = (T *)memcpy(dst, src, count); // including '\0'
+        init(length, size - count, Spilled);
     }
 }
 
