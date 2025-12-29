@@ -367,40 +367,50 @@ template<class T, size_t N>
 template<size_t M>
 inline inplace_string<T, N>& inplace_string<T, N>::replace(size_t pos, size_t count, const inplace_string<T, M>& string) noexcept
 {
-    assert(pos < length());
-    if (pos >= length())
+    const size_t len = length();
+    assert(pos <= len);
+    if (pos > len)
         return *this;
     assert(count <= string.length());
-    size_t new_len = std::max(pos + count, length());
-    size_t copy_size = count * sizeof(T);
-    if (insitu() && (pos + count <= N)) [[likely]]
-    {   // replace in-situ
-        memcpy(&buf[pos], string.c_str(), copy_size);
-        buf[new_len] = T('\0');
-        buf[Capacity] = T(N - new_len);
+    bool sso = (pos + count <= N);
+    if (sso && literal() && (len <= N))
+    {   // can fit in-situ
+        copy_inplace(lit_str, pos);
+        return replace(pos, count, string);
     }
-    else [[unlikely]]
+    else
     {
-        if (spilled() && (pos + count <= len + cap))
-        {   // we have enough heap capacity for replace
-            memcpy(str + pos, string.c_str(), copy_size);
-            cap -= (new_len - length());
+        size_t new_len = std::max(pos + count, len);
+        size_t copy_size = count * sizeof(T);
+        if (sso && insitu()) [[likely]]
+        {   // replace in-situ
+            memcpy(&buf[pos], string.c_str(), copy_size);
+            buf[new_len] = T('\0');
+            buf[Capacity] = T(N - new_len);
         }
-        else
-        {   // (re)alloc with enough space
-            size_t size = (pos + count + 1) * sizeof(T);
-            if (spilled())
-                str = (T *)realloc(str, size);
-            else
-            {
-                T *dst = (T *)malloc(size);
-                str = (T *)memcpy(dst, c_str(), pos * sizeof(T));
+        else [[unlikely]]
+        {
+            if (spilled() && (pos + count <= len + cap))
+            {   // we have enough heap capacity for replace
+                memcpy(str + pos, string.c_str(), copy_size);
+                cap -= (new_len - length());
             }
-            memcpy(str + pos, string.c_str(), copy_size);
-            cap = 0;
+            else
+            {   // (re)alloc with enough space
+                size_t size = (pos + count + 1) * sizeof(T);
+                if (spilled())
+                    str = (T *)realloc(str, size);
+                else
+                {
+                    T *dst = (T *)malloc(size);
+                    str = (T *)memcpy(dst, c_str(), pos * sizeof(T));
+                }
+                memcpy(str + pos, string.c_str(), copy_size);
+                cap = 0;
+            }
+            str[new_len] = T('\0');
+            init(new_len, cap, Spilled);
         }
-        str[new_len] = T('\0');
-        init(new_len, cap, Spilled);
     }
     return *this;
 }
