@@ -120,6 +120,42 @@ void substringTest()
     std::cout << s.substr(15) << std::endl;
 }
 
+
+void characterReplaceTest()
+{
+    std::cout << "Replacing windows-style file path to unix-style:" << std::endl;
+    string<> path(Literal("C:\\Users\\defunct\\file.txt"));
+    std::cout << path << std::endl;
+    path.replace('\\', '/');
+    std::cout << path << std::endl;
+}
+
+void substringReplaceTest()
+{
+    std::cout << "Replacing sub-string:" << std::endl;
+    // literal -> in-situ -> replace
+    const string<> ket("ket");
+    string<> basket("basic");
+    std::cout << basket << " -> ";
+    basket.replace(3, ket.length(), ket);
+    std::cout << basket << std::endl;
+    // init in-situ -> replace
+    const string<> bat("bat");
+    string<> battle;
+    battle = "castle";
+    std::cout << battle << " -> ";
+    battle.replace(0, bat.length(), bat);
+    std::cout << battle << std::endl;
+    // literal -> spill -> replace
+    string<> str("abcdefghijklmnop");
+    size_t pos = str.find("ijk");
+    assert(pos != string<>::npos);
+    const string<> xyz("xyz");
+    std::cout << str << " -> ";
+    str.replace(pos, 3, xyz);
+    std::cout << str << std::endl;
+}
+
 void doComparisons(const string<>& s1, const string<>& s2)
 {
     std::cout << "Comparing two strings: \"" << s1 << "\" and \"" << s2 << "\"\n";
@@ -160,6 +196,9 @@ int main()
     std::cout << std::endl;
     substringTest();
     std::cout << std::endl;
+    characterReplaceTest();
+    std::cout << std::endl;
+    substringReplaceTest();
 
     const string<> he("Johnny"), she("Molly");
     doComparisons(he, she);
