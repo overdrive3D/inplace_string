@@ -397,14 +397,11 @@ inline inplace_string<T, N>& inplace_string<T, N>::replace(size_t pos, size_t co
             }
             else
             {   // (re)alloc with enough space
-                size_t size = (pos + count + 1) * sizeof(T);
+                size_t size = (new_len + 1) * sizeof(T);
                 if (spilled())
                     str = (T *)realloc(str, size);
                 else
-                {
-                    T *dst = (T *)malloc(size);
-                    str = (T *)memcpy(dst, c_str(), pos * sizeof(T));
-                }
+                    copy_heap(c_str(), len, size);
                 memcpy(str + pos, string.c_str(), copy_size);
                 cap = 0;
             }
