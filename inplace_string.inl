@@ -375,7 +375,8 @@ inline inplace_string<T, N>& inplace_string<T, N>::replace(size_t pos, size_t co
     bool sso = (pos + count <= N);
     if (sso && literal() && (len <= N))
     {   // can fit in-situ
-        copy_inplace(lit_str, pos);
+        size_t num = (pos + count) >= len ? pos : len;
+        copy_inplace(lit_str, num);
         return replace(pos, count, string);
     }
     else
