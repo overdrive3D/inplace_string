@@ -31,8 +31,6 @@ public:
     using iterator = T*;
     using const_iterator = const T*;
     static constexpr size_t npos = size_t(-1);
-    static constexpr bool Ansi = std::is_same_v<T, char>;
-    static constexpr bool Wide = std::is_same_v<T, wchar_t>;
 
     inplace_string() noexcept;
     template<size_t M>
