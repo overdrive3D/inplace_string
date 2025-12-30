@@ -156,6 +156,26 @@ void substringReplaceTest()
     std::cout << str << std::endl;
 }
 
+void copyAssignmentTest()
+{
+    std::cout << "String copy assignment:" << std::endl;
+    const string<> literal("literal");
+    string<> small, lengthy, str;
+    small = "small";
+    lengthy = "overintellectualization";
+    str = literal;
+    std::cout << str << std::endl;
+    str = "acknowledgements";
+    str = small;
+    std::cout << str << std::endl;
+    str = lengthy;
+    std::cout << str << std::endl;
+    string<20> longest;
+    longest = "Some string definitely placed in the heap";
+    str = longest;
+    std::cout << str << std::endl;
+}
+
 template<class String>
 void toNumberConversionTest()
 {
@@ -239,6 +259,8 @@ int main()
     std::cout << std::endl;
     substringReplaceTest();
     std::cout << std::endl;
+    std::cout << std::endl;
+    copyAssignmentTest();
     toNumberConversionTest<string<>>();
     toNumberConversionTest<wstring<>>();
 
