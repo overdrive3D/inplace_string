@@ -510,35 +510,21 @@ inline inplace_string<T, N>& inplace_string<T, N>::operator=(const inplace_strin
 {
     if (string.literal())
     {
-        if (spilled())
-            free(str);
+        back_to_insitu();
         str = string.str;
         init(string.len, 0, Literal, string.uid);
     }
     else if (string.insitu()) [[likely]]
     {
-        if (spilled())
-        {
-            free(str);
-            reset();
-        }
+        back_to_insitu();
         copy_inplace(string.buf, string.length());
     }
     else [[unlikely]] /* spilled */
     {
         if (!spilled())
-            spill(string.str, string.len);
+            spill(string.c_str(), string.length());
         else
-        {
-            size_t size = string.bytes_size();
-            str = (len + cap >= string.len) ? str :
-                (T *)realloc(str, size);
-            if (str)
-            {
-                memcpy(str, string.str, size);
-                init(string.len, 0, Spilled);
-            }
-        }
+            replace_spilled(string);
     }
     return *this;
 }
@@ -714,6 +700,40 @@ inline void inplace_string<T, N>::spill(const T *src, size_t length) noexcept
         str = dst;
         uint32_t hash = hashed() ? (uint32_t)uid : Unhashed;
         init(length, space - length - 1, Spilled, hash);
+    }
+}
+
+template<class T, size_t N>
+inline void inplace_string<T, N>::back_to_insitu() noexcept
+{
+    if (spilled())
+    {
+        free(str);
+        reset();
+    }
+}
+
+template<class T, size_t N>
+template<size_t M>
+inline void inplace_string<T, N>::replace_spilled(const inplace_string<T, M>& string)
+{
+    size_t length = string.length();
+    size_t size = string.bytes_size();
+    T *dst;
+    if (len + cap >= length)
+    {
+        dst = str;
+        cap -= (length - len);
+    }
+    else
+    {
+        dst = (T *)realloc(str, size);
+        if (dst) cap = 0;
+    }
+    if (dst)
+    {
+        str = (T *)memcpy(dst, string.c_str(), size);
+        init(length, cap, Spilled);
     }
 }
 
