@@ -406,7 +406,7 @@ inline inplace_string<T, N>& inplace_string<T, N>::concat(const inplace_string<T
     {
         if (len1 + len2 <= N) [[likely]]
         {
-            strcat(buf, string.c_str());
+            string_concat(buf, string.c_str());
             buf[Capacity] -= (T)len2;
         }
         else [[unlikely]]
@@ -419,7 +419,7 @@ inline inplace_string<T, N>& inplace_string<T, N>::concat(const inplace_string<T
     {
         if (len2 <= cap) [[likely]]
         {
-            strcat(str, string.c_str());
+            string_concat(str, string.c_str());
             cap -= len2;
         }
         else [[unlikely]]
@@ -427,7 +427,7 @@ inline inplace_string<T, N>& inplace_string<T, N>::concat(const inplace_string<T
             len += len2;
             if (void *dst = realloc(str, bytes_size()))
             {
-                str = (T *)strcat((T *)dst, string.c_str());
+                str = string_concat((T *)dst, string.c_str());
                 cap = 0;
             }
         }

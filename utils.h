@@ -35,3 +35,15 @@ inline int string_compare(const T* lhs, const T* rhs, size_t count) noexcept
         return wmemcmp(lhs, rhs, count);
     return 0;
 }
+
+template<class T>
+inline T *string_concat(T* lhs, const T* rhs) noexcept
+{
+    assert(lhs);
+    assert(rhs);
+    if constexpr (std::is_same_v<T, char>)
+        return strcat(lhs, rhs);
+    else if constexpr (std::is_same_v<T, wchar_t>)
+        return wcscat(lhs, rhs);
+    return 0;
+}
