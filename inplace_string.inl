@@ -506,39 +506,35 @@ inline bool inplace_string<T, N>::hashed() const noexcept
 }
 
 template<class T, size_t N>
-inline inplace_string<T, N>& inplace_string<T, N>::operator=(const inplace_string& s) noexcept
+inline inplace_string<T, N>& inplace_string<T, N>::operator=(const inplace_string& string) noexcept
 {
-    if (s.literal())
+    if (string.literal())
     {
-        ~inplace_string();
-        lit_str = s.lit_str;
-        init(s.len, 0, Literal);
+        this->~inplace_string();
+        str = string.str;
+        init(string.len, 0, Literal);
     }
-    else if (s.insitu())
+    else if (string.insitu()) [[likely]]
     {
-        ~inplace_string();
-        copy_inplace(s.buf, s.length());
+        this->~inplace_string();
+        copy_inplace(string.buf, string.length());
     }
-    else // if (s.spilled())
+    else [[unlikely]] /* spilled */
     {
-        size_t size = s.bytes_size();
         if (!spilled())
-            copy_heap(s.str, s.len, size);
+            spill(string.str, string.len);
         else
         {
-            if (len >= s.len)
+            str = (len + cap >= string.len) ? str :
+                (T *)realloc(str, string.bytes_size());
+            if (str)
             {
-                memcpy(str, s.str, size);
-                cap += (len - s.len);
-                len = s.len;
-            }
-            else
-            {
-                // TODO: grow and copy
+                strcpy(str, string.str);
+                cap = 0;
+                len = string.len;
             }
         }
     }
-
     return *this;
 }
 
