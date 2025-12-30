@@ -510,13 +510,18 @@ inline inplace_string<T, N>& inplace_string<T, N>::operator=(const inplace_strin
 {
     if (string.literal())
     {
-        this->~inplace_string();
+        if (spilled())
+            free(str);
         str = string.str;
-        init(string.len, 0, Literal);
+        init(string.len, 0, Literal, string.uid);
     }
     else if (string.insitu()) [[likely]]
     {
-        this->~inplace_string();
+        if (spilled())
+        {
+            free(str);
+            reset();
+        }
         copy_inplace(string.buf, string.length());
     }
     else [[unlikely]] /* spilled */
@@ -525,13 +530,13 @@ inline inplace_string<T, N>& inplace_string<T, N>::operator=(const inplace_strin
             spill(string.str, string.len);
         else
         {
+            size_t size = string.bytes_size();
             str = (len + cap >= string.len) ? str :
-                (T *)realloc(str, string.bytes_size());
+                (T *)realloc(str, size);
             if (str)
             {
-                strcpy(str, string.str);
-                cap = 0;
-                len = string.len;
+                memcpy(str, string.str, size);
+                init(string.len, 0, Spilled);
             }
         }
     }
