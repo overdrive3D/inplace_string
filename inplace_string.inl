@@ -530,6 +530,31 @@ inline inplace_string<T, N>& inplace_string<T, N>::operator=(const inplace_strin
 }
 
 template<class T, size_t N>
+template<size_t M>
+inline inplace_string<T, N>& inplace_string<T, N>::operator=(const inplace_string<T, M>& string) noexcept
+{
+    if (string.literal())
+    {
+        back_to_insitu();
+        str = string.str;
+        init(string.len, 0, Literal, string.uid);
+    }
+    else if (string.length() <= N)
+    {
+        back_to_insitu();
+        copy_inplace(string.c_str(), string.length());
+    }
+    else
+    {
+        if (!spilled())
+            spill(string.c_str(), string.length());
+        else
+            replace_spilled(string);
+    }
+    return *this;
+}
+
+template<class T, size_t N>
 inline inplace_string<T, N>& inplace_string<T, N>::operator=(const T *s) noexcept
 {
     size_t length = string_length(s);

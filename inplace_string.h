@@ -82,6 +82,8 @@ public:
     bool hashed() const noexcept;
 
     inplace_string& operator=(const inplace_string&) noexcept;
+    template<size_t M>
+    inplace_string& operator=(const inplace_string<T, M>&) noexcept;
     inplace_string& operator=(const T*) noexcept;
 
     inplace_string& operator+=(T) noexcept;
