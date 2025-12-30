@@ -74,6 +74,10 @@ public:
     inplace_string& replace(T old, T new_) noexcept;
     template<size_t M>
     inplace_string& replace(size_t pos, size_t count, const inplace_string<T, M>& str) noexcept;
+    template<size_t M>
+    inplace_string& concat(const inplace_string<T, M>& str) noexcept;
+    template<size_t M>
+    inplace_string& concat(const T (&str)[M]) noexcept;
     inplace_string<char, N> ansi() const noexcept;
     inplace_string<wchar_t, N> wide() const noexcept;
     template<class U>

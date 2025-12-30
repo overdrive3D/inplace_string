@@ -392,6 +392,58 @@ inline inplace_string<T, N>& inplace_string<T, N>::replace(size_t pos, size_t co
 }
 
 template<class T, size_t N>
+template<size_t M>
+inline inplace_string<T, N>& inplace_string<T, N>::concat(const inplace_string<T, M>& string) noexcept
+{
+    if (literal())
+    {
+        copy_on_write();
+        return concat(string);
+    }
+    size_t len1 = length();
+    size_t len2 = string.length();
+    if (insitu()) [[likely]]
+    {
+        if (len1 + len2 <= N) [[likely]]
+        {
+            strcat(buf, string.c_str());
+            buf[Capacity] -= (T)len2;
+        }
+        else [[unlikely]]
+        {
+            spill(buf, len1);
+            return concat(string);
+        }
+    }
+    else [[unlikely]]
+    {
+        if (len2 <= cap) [[likely]]
+        {
+            strcat(str, string.c_str());
+            cap -= len2;
+        }
+        else [[unlikely]]
+        {
+            len += len2;
+            if (void *dst = realloc(str, bytes_size()))
+            {
+                str = (T *)strcat((T *)dst, string.c_str());
+                cap = 0;
+            }
+        }
+        uid = Unhashed;
+    }
+    return *this;
+}
+
+template<class T, size_t N>
+template<size_t M>
+inline inplace_string<T, N>& inplace_string<T, N>::concat(const T (&str)[M]) noexcept
+{
+    return concat(inplace_string<T, std::max(N, M)>(str));
+}
+
+template<class T, size_t N>
 inline inplace_string<char, N> inplace_string<T, N>::ansi() const noexcept
 {
     if constexpr (std::is_same_v<T, wchar_t>)
