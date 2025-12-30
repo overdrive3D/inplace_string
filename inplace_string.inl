@@ -360,6 +360,8 @@ inline inplace_string<T, N>& inplace_string<T, N>::replace(T old, T new_) noexce
             *ch = new_;
         ++ch;
     }
+    if (spilled())
+        uid = Unhashed;
     return *this;
 }
 
@@ -388,6 +390,8 @@ inline inplace_string<T, N>& inplace_string<T, N>::replace(size_t pos, size_t co
             spill(c_str(), len);
         memcpy(str + pos, string.c_str(), count * sizeof(T));
     }
+    if (spilled())
+        uid = Unhashed;
     return *this;
 }
 
