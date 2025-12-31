@@ -425,10 +425,11 @@ inline inplace_string<T, N>& inplace_string<T, N>::concat(const inplace_string<T
         }
         else [[unlikely]]
         {
-            len += len2;
-            if (void *dst = realloc(str, bytes_size()))
+            size_t sum = len1 + len2;
+            if (void *dst = realloc(str, (sum + 1) * sizeof(T)))
             {
                 str = string_concat((T *)dst, string.c_str());
+                len = sum;
                 cap = 0;
             }
         }
