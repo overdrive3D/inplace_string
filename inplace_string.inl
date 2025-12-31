@@ -734,13 +734,20 @@ inline inplace_string<T, N>::inplace_string(const T *str, size_t offset, size_t 
 
 template<class T, size_t N>
 template<size_t M>
-inline void inplace_string<T, N>::copy_ctor(const inplace_string<T, M>& s) noexcept
+inline void inplace_string<T, N>::copy_ctor(const inplace_string<T, M>& string) noexcept
 {
-    size_t len = s.length();
+    size_t len = string.length();
     if (len <= N) [[likely]]
-        copy_inplace(s.c_str(), len);
+        copy_inplace(string.c_str(), len);
     else [[unlikely]]
-        copy_heap(s.c_str(), len, s.bytes_size());
+    {
+        size_t size = string.bytes_size();
+        if (str = (T *)malloc(size))
+        {   // Copy string including '\0'
+            memcpy(str, string.c_str(), size);
+            init(len, 0, Spilled, string.hashed() ? (uint32_t)string.uid : Unhashed);
+        }
+    }
 }
 
 template<class T, size_t N>
@@ -751,19 +758,6 @@ inline void inplace_string<T, N>::copy_inplace(const T *c_str, size_t length) no
     memcpy(buf, c_str, length * sizeof(T));
     buf[length] = T('\0');
     buf[Capacity] = T(N - length);
-}
-
-template<class T, size_t N>
-inline void inplace_string<T, N>::copy_heap(const T *src, size_t length, size_t size) noexcept
-{
-    size_t count = (length + 1) * sizeof(T);
-    assert(count <= size);
-    void *dst = malloc(size);
-    if (dst)
-    {
-        str = (T *)memcpy(dst, src, count); // including '\0'
-        init(length, size - count, Spilled);
-    }
 }
 
 template<class T, size_t N>
