@@ -400,10 +400,7 @@ template<size_t M>
 inline inplace_string<T, N>& inplace_string<T, N>::concat(const inplace_string<T, M>& string) noexcept
 {
     if (literal())
-    {
         copy_on_write();
-        return concat(string);
-    }
     size_t len1 = length();
     size_t len2 = string.length();
     if (insitu()) [[likely]]
