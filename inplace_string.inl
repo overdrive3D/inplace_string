@@ -369,6 +369,7 @@ template<class T, size_t N>
 template<size_t M>
 inline inplace_string<T, N>& inplace_string<T, N>::replace(size_t pos, size_t count, const inplace_string<T, M>& string) noexcept
 {
+    assert(this != &string);
     const size_t len = length();
     assert(pos <= len);
     if (pos > len)
@@ -399,6 +400,7 @@ template<class T, size_t N>
 template<size_t M>
 inline inplace_string<T, N>& inplace_string<T, N>::concat(const inplace_string<T, M>& string) noexcept
 {
+    assert(this != &string);
     if (literal())
         copy_on_write();
     size_t len1 = length();
@@ -562,6 +564,8 @@ inline bool inplace_string<T, N>::hashed() const noexcept
 template<class T, size_t N>
 inline inplace_string<T, N>& inplace_string<T, N>::operator=(const inplace_string& string) noexcept
 {
+    if (this != &string)
+        return *this;
     if (string.literal())
     {
         back_to_insitu();
