@@ -156,6 +156,17 @@ void substringReplaceTest()
     std::cout << str << std::endl;
 }
 
+void concatenationTest()
+{
+    string<> str1("ambient");
+    str1.concat(" sound");
+    std::cout << str1 << std::endl;
+    string<> str2;
+    str2 = "overintellectual";
+    str2.concat("ization");
+    std::cout << str2 << std::endl;
+}
+
 void copyAssignmentTest()
 {
     std::cout << "String copy assignment:" << std::endl;
@@ -259,6 +270,7 @@ int main()
     std::cout << std::endl;
     substringReplaceTest();
     std::cout << std::endl;
+    concatenationTest();
     std::cout << std::endl;
     copyAssignmentTest();
     toNumberConversionTest<string<>>();
