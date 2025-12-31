@@ -8,17 +8,13 @@ inline inplace_string<T, N>::inplace_string() noexcept:
 template<class T, size_t N>
 template<size_t M>
 inline inplace_string<T, N>::inplace_string(const T (&str)[M]) noexcept:
-    lit_str(str)
-{
-    init(M - 1, 0, Literal);
-}
+    inplace_string(str, 0, M - 1)
+{}
 
 template<class T, size_t N>
-inline inplace_string<T, N>::inplace_string(const literal_string<T>& lit) noexcept:
-    lit_str(lit.c_str())
-{
-    init(lit.length(), 0, Literal, lit.hash());
-}
+inline inplace_string<T, N>::inplace_string(const literal_string<T>& str) noexcept:
+    inplace_string(str.c_str(), 0, str.length(), str.hash())
+{}
 
 template<class T, size_t N>
 inline inplace_string<T, N>::inplace_string(const inplace_string& str) noexcept:
@@ -730,10 +726,10 @@ inline T inplace_string<T, N>::operator[](size_t index) const noexcept
 }
 
 template<class T, size_t N>
-inline inplace_string<T, N>::inplace_string(const T *str, size_t offset, size_t length) noexcept:
+inline inplace_string<T, N>::inplace_string(const T *str, size_t offset, size_t length, uint32_t hash) noexcept:
     lit_str(str + offset)
 {
-    init(length, 0, Literal);
+    init(length, 0, Literal, hash);
 }
 
 template<class T, size_t N>
