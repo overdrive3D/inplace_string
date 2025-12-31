@@ -564,15 +564,11 @@ inline inplace_string<T, N>& inplace_string<T, N>::operator=(const inplace_strin
         return *this;
     if (string.literal())
     {
-        back_inplace();
-        str = string.str;
+        back_inplace(string.str);
         init(string.len, 0, Literal, string.uid);
     }
     else if (string.insitu()) [[likely]]
-    {
-        back_inplace();
-        copy_inplace(string.buf, string.length());
-    }
+        back_inplace(string.buf, string.length());
     else [[unlikely]] /* spilled */
     {
         if (!spilled())
@@ -589,15 +585,11 @@ inline inplace_string<T, N>& inplace_string<T, N>::operator=(const inplace_strin
 {
     if (string.literal())
     {
-        back_inplace();
-        str = string.str;
+        back_inplace(string.str);
         init(string.len, 0, Literal, string.uid);
     }
     else if (string.length() <= N)
-    {
-        back_inplace();
-        copy_inplace(string.c_str(), string.length());
-    }
+        back_inplace(string.c_str(), string.length());
     else
     {
         if (!spilled())
@@ -776,16 +768,6 @@ inline void inplace_string<T, N>::spill_to_heap(const T *src, size_t length) noe
 }
 
 template<class T, size_t N>
-inline void inplace_string<T, N>::back_inplace() noexcept
-{
-    if (spilled())
-    {
-        free(str);
-        reset();
-    }
-}
-
-template<class T, size_t N>
 template<size_t M>
 inline void inplace_string<T, N>::replace_spilled(const inplace_string<T, M>& string)
 {
@@ -807,6 +789,20 @@ inline void inplace_string<T, N>::replace_spilled(const inplace_string<T, M>& st
         str = (T *)memcpy(dst, string.c_str(), size);
         init(length, cap, Spilled);
     }
+}
+
+template<class T, size_t N>
+inline void inplace_string<T, N>::back_inplace(const T *c_str /* nullptr */, size_t length /* 0 */) noexcept
+{
+    if (spilled())
+    {
+        free(str);
+        reset();
+    }
+    if (length)
+        copy_inplace(c_str, length);
+    else if (c_str)
+        lit_str = c_str;
 }
 
 template<class T, size_t N>

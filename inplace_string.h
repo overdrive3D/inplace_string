@@ -125,7 +125,7 @@ private:
     void spill_to_heap(const T *s, size_t length) noexcept;
     template<size_t M>
     void replace_spilled(const inplace_string<T, M>& string);
-    void back_inplace() noexcept;
+    void back_inplace(const T *str = nullptr, size_t length = 0) noexcept;
     void copy_on_write() noexcept;
     void grow() noexcept;
     template<size_t M>
@@ -137,7 +137,7 @@ private:
     union
     {
         T buf[N + 1];
-        struct { const T *const lit_str; };
+        struct { const T *lit_str; };
         struct {
             T *str;
             struct {
