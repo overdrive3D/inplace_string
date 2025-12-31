@@ -236,7 +236,7 @@ inline void inplace_string<T, N>::push_back(T ch) noexcept
     else [[unlikely]]
     {
         if (!capacity)
-            spill(buf, N);
+            spill_to_heap(buf, N);
         else if (!cap)
             grow();
         str[len++] = ch;
@@ -335,7 +335,7 @@ inline inplace_string<T, N> inplace_string<T, N>::substr(size_t pos, size_t coun
     if (count <= N) [[likely]]
         sub.copy_inplace(first, count);
     else [[unlikely]]
-        sub.spill(first, count);
+        sub.spill_to_heap(first, count);
     return sub;
 }
 
@@ -384,7 +384,7 @@ inline inplace_string<T, N>& inplace_string<T, N>::replace(size_t pos, size_t co
     else [[unlikely]]
     {
         if (!spilled())
-            spill(c_str(), len);
+            spill_to_heap(c_str(), len);
         memcpy(str + pos, string.c_str(), count * sizeof(T));
     }
     if (spilled())
@@ -410,7 +410,7 @@ inline inplace_string<T, N>& inplace_string<T, N>::concat(const inplace_string<T
         }
         else [[unlikely]]
         {
-            spill(buf, len1);
+            spill_to_heap(buf, len1);
             return concat(string);
         }
     }
@@ -576,7 +576,7 @@ inline inplace_string<T, N>& inplace_string<T, N>::operator=(const inplace_strin
     else [[unlikely]] /* spilled */
     {
         if (!spilled())
-            spill(string.c_str(), string.length());
+            spill_to_heap(string.c_str(), string.length());
         else
             replace_spilled(string);
     }
@@ -601,7 +601,7 @@ inline inplace_string<T, N>& inplace_string<T, N>::operator=(const inplace_strin
     else
     {
         if (!spilled())
-            spill(string.c_str(), string.length());
+            spill_to_heap(string.c_str(), string.length());
         else
             replace_spilled(string);
     }
@@ -615,7 +615,7 @@ inline inplace_string<T, N>& inplace_string<T, N>::operator=(const T *s) noexcep
     if (length <= N)
         copy_inplace(s, length);
     else
-        spill(s, length);
+        spill_to_heap(s, length);
     return *this;
 }
 
@@ -761,18 +761,17 @@ inline void inplace_string<T, N>::copy_inplace(const T *c_str, size_t length) no
 }
 
 template<class T, size_t N>
-inline void inplace_string<T, N>::spill(const T *src, size_t length) noexcept
+inline void inplace_string<T, N>::spill_to_heap(const T *src, size_t length) noexcept
 {
     assert(!spilled());
     assert(src);
-    assert(length);
-    size_t space;
-    if (auto dst = buy_space(length, space))
-    {   // Copy string including '\0'
-        memcpy(dst, src, (length + 1) * sizeof(T));
-        str = dst;
-        uint32_t hash = hashed() ? (uint32_t)uid : Unhashed;
-        init(length, space - length - 1, Spilled, hash);
+    assert(length > 0);
+    size_t capacity = length >> 1;
+    size_t size = (length + 1 + capacity) * sizeof(T);
+    if (void *dst = malloc(size))
+    {
+        str = (T *)memcpy(dst, src, (length + 1) * sizeof(T));
+        init(length, capacity, Spilled, literal() ? (uint32_t)uid : Unhashed);
     }
 }
 
@@ -817,7 +816,7 @@ inline void inplace_string<T, N>::copy_on_write() noexcept
     if (len <= N) [[likely]]
         copy_inplace(lit_str, len);
     else
-        spill(lit_str, len);
+        spill_to_heap(lit_str, len);
 }
 
 template<class T, size_t N>
@@ -832,17 +831,6 @@ inline void inplace_string<T, N>::grow() noexcept
         str = (T *)grown;
         cap = count - len - 1;
     }
-}
-
-template<class T, size_t N>
-inline T *inplace_string<T, N>::buy_space(size_t much, size_t& space) noexcept
-{
-    space = much + (much >> 1);
-    const size_t size = space * sizeof(T);
-    if (insitu() || literal())
-        return (T *)malloc(size);
-    else
-        return (T *)realloc(str, size);
 }
 
 template<class T, size_t N>

@@ -122,13 +122,12 @@ private:
     template<size_t M>
     void copy_ctor(const inplace_string<T, M>& str) noexcept;
     void copy_inplace(const T *c_str, size_t length) noexcept;
-    void spill(const T *s, size_t length) noexcept;
+    void spill_to_heap(const T *s, size_t length) noexcept;
     void back_to_insitu() noexcept;
     template<size_t M>
     void replace_spilled(const inplace_string<T, M>& string);
     void copy_on_write() noexcept;
     void grow() noexcept;
-    T *buy_space(size_t much, size_t& space) noexcept;
     template<size_t M>
     void move(inplace_string<T, M>&) noexcept;
     void init(size_t length, size_t capacity, T flag, uint32_t hash = Unhashed) noexcept;
