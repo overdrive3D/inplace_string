@@ -564,7 +564,7 @@ inline bool inplace_string<T, N>::hashed() const noexcept
 template<class T, size_t N>
 inline inplace_string<T, N>& inplace_string<T, N>::operator=(const inplace_string& string) noexcept
 {
-    if (this != &string)
+    if (this == &string)
         return *this;
     if (string.literal())
     {
