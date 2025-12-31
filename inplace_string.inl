@@ -830,15 +830,6 @@ inline void inplace_string<T, N>::grow() noexcept
 }
 
 template<class T, size_t N>
-template<size_t M>
-inline void inplace_string<T, N>::move(inplace_string<T, M>& other) noexcept
-{
-    str = other.str;
-    init(other.len, other.cap, other.spilled() ? Spilled : Literal, other.uid);
-    other.reset();
-}
-
-template<class T, size_t N>
 inline void inplace_string<T, N>::init(size_t length, size_t capacity, T flag, uint32_t hash /* Unhashed */) noexcept
 {
     len = length;
