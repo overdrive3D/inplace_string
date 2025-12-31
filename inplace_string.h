@@ -123,9 +123,9 @@ private:
     void copy_ctor(const inplace_string<T, M>& str) noexcept;
     void copy_inplace(const T *c_str, size_t length) noexcept;
     void spill_to_heap(const T *s, size_t length) noexcept;
-    void back_to_insitu() noexcept;
     template<size_t M>
     void replace_spilled(const inplace_string<T, M>& string);
+    void back_inplace() noexcept;
     void copy_on_write() noexcept;
     void grow() noexcept;
     template<size_t M>

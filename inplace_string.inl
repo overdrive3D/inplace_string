@@ -564,13 +564,13 @@ inline inplace_string<T, N>& inplace_string<T, N>::operator=(const inplace_strin
         return *this;
     if (string.literal())
     {
-        back_to_insitu();
+        back_inplace();
         str = string.str;
         init(string.len, 0, Literal, string.uid);
     }
     else if (string.insitu()) [[likely]]
     {
-        back_to_insitu();
+        back_inplace();
         copy_inplace(string.buf, string.length());
     }
     else [[unlikely]] /* spilled */
@@ -589,13 +589,13 @@ inline inplace_string<T, N>& inplace_string<T, N>::operator=(const inplace_strin
 {
     if (string.literal())
     {
-        back_to_insitu();
+        back_inplace();
         str = string.str;
         init(string.len, 0, Literal, string.uid);
     }
     else if (string.length() <= N)
     {
-        back_to_insitu();
+        back_inplace();
         copy_inplace(string.c_str(), string.length());
     }
     else
@@ -776,7 +776,7 @@ inline void inplace_string<T, N>::spill_to_heap(const T *src, size_t length) noe
 }
 
 template<class T, size_t N>
-inline void inplace_string<T, N>::back_to_insitu() noexcept
+inline void inplace_string<T, N>::back_inplace() noexcept
 {
     if (spilled())
     {
