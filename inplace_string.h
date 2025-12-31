@@ -121,14 +121,13 @@ private:
         uint32_t hash = Unhashed) noexcept;
     template<size_t M>
     void copy_ctor(const inplace_string<T, M>& str) noexcept;
+    void copy_on_write() noexcept;
     void copy_inplace(const T *c_str, size_t length) noexcept;
     void spill_to_heap(const T *s, size_t length) noexcept;
-    template<size_t M>
-    void replace_spilled(const inplace_string<T, M>& string);
     void back_inplace(const T *str = nullptr, size_t length = 0) noexcept;
-    void copy_on_write() noexcept;
     void grow() noexcept;
     template<size_t M>
+    void replace_spilled(const inplace_string<T, M>& string);
     void init(size_t length, size_t capacity, T flag, uint32_t hash = Unhashed) noexcept;
     void reset() noexcept;
     bool lazy_hash() const noexcept;

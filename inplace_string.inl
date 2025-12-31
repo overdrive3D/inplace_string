@@ -743,6 +743,16 @@ inline void inplace_string<T, N>::copy_ctor(const inplace_string<T, M>& string) 
 }
 
 template<class T, size_t N>
+inline void inplace_string<T, N>::copy_on_write() noexcept
+{
+    assert(literal());
+    if (len <= N) [[likely]]
+        copy_inplace(lit_str, len);
+    else [[unlikely]]
+        spill_to_heap(lit_str, len);
+}
+
+template<class T, size_t N>
 inline void inplace_string<T, N>::copy_inplace(const T *c_str, size_t length) noexcept
 {
     assert(!spilled()); // Don't overwrite heap pointer
@@ -768,6 +778,35 @@ inline void inplace_string<T, N>::spill_to_heap(const T *src, size_t length) noe
 }
 
 template<class T, size_t N>
+inline void inplace_string<T, N>::back_inplace(const T *string /* nullptr */, size_t length /* 0 */) noexcept
+{
+    if (spilled())
+    {
+        free(str);
+        reset();
+    }
+    if (length)
+        copy_inplace(string, length);
+    else if (string)
+        lit_str = string;
+}
+
+template<class T, size_t N>
+inline void inplace_string<T, N>::grow() noexcept
+{
+    assert(spilled());
+    assert(len > 0);
+    assert(0 == cap);
+    size_t capacity = (len >> 1);
+    size_t size = (len + 1 + capacity) * sizeof(T);
+    if (void *dst = realloc(str, size))
+    {
+        str = (T *)dst;
+        cap = capacity;
+    }
+}
+
+template<class T, size_t N>
 template<size_t M>
 inline void inplace_string<T, N>::replace_spilled(const inplace_string<T, M>& string)
 {
@@ -788,44 +827,6 @@ inline void inplace_string<T, N>::replace_spilled(const inplace_string<T, M>& st
     {
         str = (T *)memcpy(dst, string.c_str(), size);
         init(length, cap, Spilled);
-    }
-}
-
-template<class T, size_t N>
-inline void inplace_string<T, N>::back_inplace(const T *c_str /* nullptr */, size_t length /* 0 */) noexcept
-{
-    if (spilled())
-    {
-        free(str);
-        reset();
-    }
-    if (length)
-        copy_inplace(c_str, length);
-    else if (c_str)
-        lit_str = c_str;
-}
-
-template<class T, size_t N>
-inline void inplace_string<T, N>::copy_on_write() noexcept
-{
-    assert(literal());
-    if (len <= N) [[likely]]
-        copy_inplace(lit_str, len);
-    else
-        spill_to_heap(lit_str, len);
-}
-
-template<class T, size_t N>
-inline void inplace_string<T, N>::grow() noexcept
-{
-    assert(spilled());
-    assert(len);
-    const size_t count = len << 1;
-    void *grown = realloc(str, count * sizeof(T));
-    if (grown)
-    {
-        str = (T *)grown;
-        cap = count - len - 1;
     }
 }
 
