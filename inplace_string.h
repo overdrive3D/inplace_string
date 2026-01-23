@@ -66,6 +66,7 @@ public:
     void push_back(T ch) noexcept;
     void pop_back() noexcept;
     size_t find(T ch, size_t pos = 0) const noexcept;
+    size_t find_last(T ch, size_t pos = 0) const noexcept;
     size_t find(const T *substr, size_t pos = 0) const noexcept;
     template<size_t M>
     size_t find(const inplace_string<T, M>& str, size_t pos = 0) const noexcept;

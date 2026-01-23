@@ -278,6 +278,18 @@ inline size_t inplace_string<T, N>::find(T ch, size_t pos /* 0 */) const noexcep
 }
 
 template<class T, size_t N>
+inline size_t inplace_string<T, N>::find_last(T ch, size_t pos /* 0 */) const noexcept
+{
+    const_iterator start = cbegin(), p = cend() - pos;
+    while (p != start)
+    {
+        if (*--p == ch)
+            return size_t(p - start);
+    }
+    return npos;
+}
+
+template<class T, size_t N>
 inline size_t inplace_string<T, N>::find(const T *substr, size_t pos /* 0 */) const noexcept
 {
     assert(substr);
