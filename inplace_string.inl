@@ -167,7 +167,7 @@ inline T& inplace_string<T, N>::at(size_t index) noexcept
 }
 
 template<class T, size_t N>
-inline T *inplace_string<T, N>::begin() noexcept
+inline typename inplace_string<T, N>::iterator inplace_string<T, N>::begin() noexcept
 {
     assert(!literal());
     if (literal())
@@ -179,7 +179,7 @@ inline T *inplace_string<T, N>::begin() noexcept
 }
 
 template<class T, size_t N>
-inline T *inplace_string<T, N>::end() noexcept
+inline typename inplace_string<T, N>::iterator inplace_string<T, N>::end() noexcept
 {
     assert(!literal());
     if (literal())
@@ -195,13 +195,13 @@ inline T *inplace_string<T, N>::end() noexcept
 }
 
 template<class T, size_t N>
-inline const T *inplace_string<T, N>::begin() const noexcept
+inline typename inplace_string<T, N>::const_iterator inplace_string<T, N>::begin() const noexcept
 {
     return insitu() ? buf : str;
 }
 
 template<class T, size_t N>
-inline const T *inplace_string<T, N>::end() const noexcept
+inline typename inplace_string<T, N>::const_iterator inplace_string<T, N>::end() const noexcept
 {
     const T *end = insitu()
         ? buf + (N - buf[Capacity])
@@ -211,13 +211,13 @@ inline const T *inplace_string<T, N>::end() const noexcept
 }
 
 template<class T, size_t N>
-inline const T *inplace_string<T, N>::cbegin() const noexcept
+inline typename inplace_string<T, N>::const_iterator inplace_string<T, N>::cbegin() const noexcept
 {
     return begin();
 }
 
 template<class T, size_t N>
-inline const T *inplace_string<T, N>::cend() const noexcept
+inline typename inplace_string<T, N>::const_iterator inplace_string<T, N>::cend() const noexcept
 {
     return end();
 }

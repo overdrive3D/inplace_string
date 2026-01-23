@@ -57,12 +57,12 @@ public:
     T& back() noexcept;
     T at(size_t index) const noexcept;
     T& at(size_t index) noexcept;
-    T *begin() noexcept;
-    T *end() noexcept;
-    const T *begin() const noexcept;
-    const T *end() const noexcept;
-    const T *cbegin() const noexcept;
-    const T *cend() const noexcept;
+    iterator begin() noexcept;
+    iterator end() noexcept;
+    const_iterator begin() const noexcept;
+    const_iterator end() const noexcept;
+    const_iterator cbegin() const noexcept;
+    const_iterator cend() const noexcept;
     void push_back(T ch) noexcept;
     void pop_back() noexcept;
     size_t find(T ch, size_t pos = 0) const noexcept;
