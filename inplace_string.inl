@@ -268,6 +268,7 @@ inline void inplace_string<T, N>::pop_back() noexcept
 template<class T, size_t N>
 inline size_t inplace_string<T, N>::find(T ch, size_t pos /* 0 */) const noexcept
 {
+    assert(pos < length());
     const_iterator start = cbegin(), end = cend();
     for (const_iterator p = start + pos; p < end; ++p)
     {
@@ -280,6 +281,7 @@ inline size_t inplace_string<T, N>::find(T ch, size_t pos /* 0 */) const noexcep
 template<class T, size_t N>
 inline size_t inplace_string<T, N>::find_last(T ch, size_t pos /* 0 */) const noexcept
 {
+    assert(pos < length());
     const_iterator start = cbegin(), p = cend() - pos;
     while (p != start)
     {
