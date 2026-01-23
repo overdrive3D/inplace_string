@@ -292,20 +292,15 @@ inline size_t inplace_string<T, N>::find_last(T ch, size_t pos /* 0 */) const no
 template<class T, size_t N>
 inline size_t inplace_string<T, N>::find(const T *substr, size_t pos /* 0 */) const noexcept
 {
-    assert(substr);
-    size_t len = length();
-    assert(pos < len);
-    if (pos >= len)
+    assert(pos < length());
+    if (!substr || (pos >= length())) [[unlikely]]
         return npos;
-    const T *begin = c_str() + pos;
-    const T *found;
+    const_iterator first = cbegin() + pos, found;
     if constexpr (std::is_same_v<T, char>)
-        found = strstr(begin, substr);
+        found = strstr(first, substr);
     else
-        found = wcsstr(begin, substr);
-    if (!found)
-        return npos;
-    return found - begin + pos;
+        found = wcsstr(first, substr);
+    return found ? (found - first + pos) : npos;
 }
 
 template<class T, size_t N>
