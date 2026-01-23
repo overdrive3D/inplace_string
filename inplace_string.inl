@@ -231,7 +231,7 @@ inline void inplace_string<T, N>::push_back(T ch) noexcept
     {
         size_t len = N - capacity--;
         buf[len] = ch;
-        buf[len + 1] = T('\0');
+        buf[len + 1] = '\0';
     }
     else [[unlikely]]
     {
@@ -240,7 +240,7 @@ inline void inplace_string<T, N>::push_back(T ch) noexcept
         else if (!cap)
             grow();
         str[len++] = ch;
-        str[len] = T('\0');
+        str[len] = '\0';
         --cap;
         uid = Unhashed;
     }
@@ -255,11 +255,11 @@ inline void inplace_string<T, N>::pop_back() noexcept
     if (capacity >= 0) [[likely]]
     {
         size_t len = N - capacity++;
-        buf[len - 1] = T('\0');
+        buf[len - 1] = '\0';
     }
     else [[unlikely]]
     {
-        str[--len] = T('\0');
+        str[--len] = '\0';
         ++cap;
         uid = Unhashed;
     }
@@ -335,7 +335,7 @@ inline inplace_string<T, N> inplace_string<T, N>::substr(size_t pos, size_t coun
     if (pos >= len)
         return inplace_string();
     count = std::min(count, len - pos);
-    if (literal() && (T('\0') == lit_str[pos + count]))
+    if (literal() && ('\0' == lit_str[pos + count]))
         return inplace_string(lit_str, pos, count);
     const_iterator first = begin() + pos;
     inplace_string str;
@@ -540,7 +540,7 @@ inline U inplace_string<T, N>::to() const noexcept
                 number = (U)wcstod(c_str(), &end);
         }
     }
-    assert(T('\0') == *end);
+    assert('\0' == *end);
     return number;
 }
 
@@ -765,7 +765,7 @@ inline void inplace_string<T, N>::copy_inplace(const T *c_str, size_t length) no
     assert(!spilled()); // Don't overwrite heap pointer
     assert(length <= N);
     memcpy(buf, c_str, length * sizeof(T));
-    buf[length] = T('\0');
+    buf[length] = '\0';
     buf[Capacity] = T(N - length);
 }
 
@@ -849,7 +849,7 @@ inline void inplace_string<T, N>::init(size_t length, size_t capacity, T flag, u
 template<class T, size_t N>
 inline void inplace_string<T, N>::reset() noexcept
 {
-    buf[0] = T('\0');
+    buf[0] = '\0';
     buf[Capacity] = N;
 }
 
