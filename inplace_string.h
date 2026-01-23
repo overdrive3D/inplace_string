@@ -28,6 +28,8 @@ class alignas(16) inplace_string
 
 public:
     using type = T;
+    using reference = T&;
+    using const_reference = const T&;
     using iterator = T*;
     using const_iterator = const T*;
     static constexpr size_t npos = size_t(-1);
