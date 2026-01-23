@@ -316,6 +316,12 @@ inline size_t inplace_string<T, N>::find(const inplace_string<T, M>& substr, siz
 }
 
 template<class T, size_t N>
+inline bool inplace_string<T, N>::contains(T ch) const noexcept
+{
+    return find(ch) != npos;
+}
+
+template<class T, size_t N>
 inline size_t inplace_string<T, N>::copy(T *dst, size_t count, size_t pos /* 0 */) const noexcept
 {
     size_t len = length();
