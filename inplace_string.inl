@@ -187,7 +187,7 @@ inline typename inplace_string<T, N>::iterator inplace_string<T, N>::end() noexc
     bool sso = insitu();
     if (!sso) [[unlikely]]
         uid = Unhashed; // invalidate hash
-    T *end = sso
+    iterator end = sso
         ? buf + (N - buf[Capacity])
         : str + len;
     assert('\0' == *end);
@@ -203,7 +203,7 @@ inline typename inplace_string<T, N>::const_iterator inplace_string<T, N>::begin
 template<class T, size_t N>
 inline typename inplace_string<T, N>::const_iterator inplace_string<T, N>::end() const noexcept
 {
-    const T *end = insitu()
+    const_iterator end = insitu()
         ? buf + (N - buf[Capacity])
         : str + len;
     assert('\0' == *end);
@@ -337,13 +337,13 @@ inline inplace_string<T, N> inplace_string<T, N>::substr(size_t pos, size_t coun
     count = std::min(count, len - pos);
     if (literal() && (T('\0') == lit_str[pos + count]))
         return inplace_string(lit_str, pos, count);
-    const T *first = begin() + pos;
-    inplace_string sub;
+    const_iterator first = begin() + pos;
+    inplace_string str;
     if (count <= N) [[likely]]
-        sub.copy_inplace(first, count);
+        str.copy_inplace(first, count);
     else [[unlikely]]
-        sub.spill_to_heap(first, count);
-    return sub;
+        str.spill_to_heap(first, count);
+    return str;
 }
 
 template<class T, size_t N>
@@ -355,13 +355,13 @@ inline inplace_string<T, N>& inplace_string<T, N>::replace(T old, T new_) noexce
         return *this;
     if (literal())
         copy_on_write();
-    T *ch = begin() + pos;
-    *ch++ = new_;
-    while (*ch)
+    iterator p = begin() + pos;
+    *p++ = new_;
+    while (*p)
     {
-        if (*ch == old)
-            *ch = new_;
-        ++ch;
+        if (*p == old)
+            *p = new_;
+        ++p;
     }
     if (spilled())
         uid = Unhashed;
